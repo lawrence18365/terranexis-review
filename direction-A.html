@@ -1,0 +1,3498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0D1A12">
+<title>Field Station 04 — Reserve Your Trial · TerraNexis</title>
+<meta name="description" content="Live soil data from Niagara. Reserve your 60-day TerraNexis trial — sensors built for Ontario farms.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,300..900,0..100;1,9..144,300..900,0..100&family=Instrument+Sans:ital,wght@0,400..700;1,400..700&family=JetBrains+Mono:wght@400;500&family=Caveat:wght@500..700&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════════════════════════
+   TerraNexis · Field Instrument · v2
+   ─────────────────────────────────────────────────────────────── */
+
+:root {
+  --paper:        #F2EBD3;
+  --paper-warm:   #FAF4DD;
+  --paper-grid:   #E5DCBE;
+  --whisper:      #D9CDA6;
+  --ink:          #0D1A12;
+  --ink-soft:     #2D3A30;
+  --moss:         #1F3D24;
+  --moss-deep:    #112016;
+  --leaf:         #5C8A3C;
+  --leaf-bright:  #7AB02E;
+  --terra:        #B86F44;
+  --terra-soft:   #D89A6E;
+  --signal:       #3B6B7E;
+  --signal-bright:#5497B0;
+  --alert:        #D77A3F;
+  --rule:         #C9BD9C;
+  --rule-soft:    #D9CFAE;
+  --ease:         cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+
+body {
+  font-family: "Instrument Sans", -apple-system, system-ui, sans-serif;
+  font-size: 16.5px;
+  line-height: 1.55;
+  color: var(--ink);
+  background: var(--paper);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: hidden;
+  letter-spacing: -0.005em;
+  background-image:
+    linear-gradient(var(--paper-grid) 0.5px, transparent 0.5px),
+    linear-gradient(90deg, var(--paper-grid) 0.5px, transparent 0.5px),
+    radial-gradient(ellipse 90% 60% at 100% 0%, rgba(124,180,58,0.06), transparent 65%),
+    radial-gradient(ellipse 60% 40% at 0% 90%, rgba(184,111,68,0.05), transparent 60%);
+  background-size: 32px 32px, 32px 32px, 100% 100%, 100% 100%;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence baseFrequency='0.92' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.05 0 0 0 0 0.10 0 0 0 0 0.07 0 0 0 0.05 0'/></filter><rect width='220' height='220' filter='url(%23n)'/></svg>");
+  mix-blend-mode: multiply;
+  opacity: 0.6;
+}
+
+::selection { background: var(--leaf-bright); color: var(--ink); }
+
+/* ─────── Custom cursor (desktop only) ─────── */
+@media (hover: hover) and (pointer: fine) {
+  body, a, button, input, textarea, label { cursor: none; }
+  .cursor {
+    position: fixed;
+    width: 28px; height: 28px;
+    border: 1.2px solid var(--moss);
+    border-radius: 50%;
+    pointer-events: none;
+    transform: translate(-50%, -50%);
+    transition: width 0.25s var(--ease), height 0.25s var(--ease), border-color 0.25s, background 0.25s;
+    z-index: 9999;
+    mix-blend-mode: multiply;
+  }
+  .cursor::before, .cursor::after {
+    content: ''; position: absolute; background: var(--moss);
+  }
+  .cursor::before { left: -10px; right: -10px; top: 50%; height: 1px; margin-top: -0.5px; }
+  .cursor::after  { top: -10px; bottom: -10px; left: 50%; width: 1px; margin-left: -0.5px; }
+  .cursor.is-over-link {
+    width: 56px; height: 56px;
+    background: rgba(122,176,46,0.12);
+    border-color: var(--leaf);
+  }
+  .cursor.is-over-link::before, .cursor.is-over-link::after { background: var(--leaf); }
+  .cursor.is-pressing { width: 18px; height: 18px; }
+}
+
+/* ═══════════════ REVIEW BAR (v1 framing) ═══════════════ */
+.review-bar {
+  position: relative;
+  z-index: 60;
+  background: var(--moss);
+  color: rgba(255,255,255,0.92);
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.66rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  padding: 0.55rem 1.4rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+.review-bar .review-back {
+  color: rgba(255,255,255,0.85);
+  text-decoration: none;
+  transition: opacity 0.2s, transform 0.3s var(--ease);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.review-bar .review-back:hover { opacity: 1; transform: translateX(-3px); }
+.review-bar .review-tag {
+  color: rgba(255,255,255,0.55);
+  font-size: 0.6rem;
+}
+@media (max-width: 600px) {
+  .review-bar { padding: 0.5rem 1rem; font-size: 0.6rem; letter-spacing: 0.14em; }
+  .review-bar .review-tag { display: none; }
+}
+
+/* ═══════════════ TOP BAR ═══════════════ */
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: rgba(242,235,211,0.86);
+  backdrop-filter: blur(16px) saturate(140%);
+  -webkit-backdrop-filter: blur(16px) saturate(140%);
+  border-bottom: 1px solid var(--rule);
+}
+
+.topbar-inner {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 1.1rem 2rem;
+  max-width: 1480px;
+  margin: 0 auto;
+}
+
+.brand {
+  display: flex;
+  gap: 0.7rem;
+  align-items: center;
+  font-family: "Fraunces", serif;
+  font-weight: 500;
+  font-size: 1.45rem;
+  letter-spacing: -0.025em;
+  font-variation-settings: "opsz" 60, "SOFT" 80;
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.brand-mark { width: 1.7rem; height: 1.7rem; color: var(--moss); }
+.brand em { font-style: italic; font-weight: 400; color: var(--leaf); }
+
+/* ─────── Live ticker ─────── */
+.ticker {
+  overflow: hidden;
+  border-left: 1px solid var(--rule);
+  border-right: 1px solid var(--rule);
+  padding: 0 1rem;
+  position: relative;
+  mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+}
+
+.ticker-track {
+  display: flex;
+  align-items: center;
+  gap: 2.5rem;
+  white-space: nowrap;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  animation: ticker 90s linear infinite;
+  width: max-content;
+}
+
+@keyframes ticker {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+.ticker-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.ticker-sep { color: var(--rule); }
+.ticker .dot { width: 6px; height: 6px; border-radius: 50%; display: inline-block; }
+.ticker .ok    { background: var(--leaf-bright); }
+.ticker .warn  { background: var(--alert); }
+.ticker .info  { background: var(--signal-bright); }
+.ticker .station { color: var(--moss); font-weight: 500; }
+.ticker .val { color: var(--ink); font-weight: 500; }
+.ticker .status-warn { color: var(--alert); font-weight: 500; }
+.ticker .status-ok { color: var(--leaf); font-weight: 500; }
+.ticker .status-info { color: var(--signal); font-weight: 500; }
+
+.topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--ink-soft);
+}
+
+.pulse {
+  width: 7px; height: 7px;
+  background: var(--leaf-bright);
+  border-radius: 50%;
+  box-shadow: 0 0 0 0 rgba(130,180,58,0.6);
+  animation: pulse 2.4s infinite;
+}
+
+@keyframes pulse {
+  0%   { box-shadow: 0 0 0 0   rgba(130,180,58,0.55); }
+  70%  { box-shadow: 0 0 0 8px rgba(130,180,58,0); }
+  100% { box-shadow: 0 0 0 0   rgba(130,180,58,0); }
+}
+
+@media (max-width: 880px) {
+  .topbar-inner { grid-template-columns: 1fr auto; padding: 0.85rem 1rem; }
+  .ticker { display: none; }
+}
+
+/* ═══════════════ HERO ═══════════════ */
+.hero {
+  max-width: 1480px;
+  margin: 0 auto;
+  padding: 4rem 2rem 4rem;
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  gap: 4rem;
+  align-items: start;
+  position: relative;
+  z-index: 2;
+}
+
+@media (max-width: 1100px) {
+  .hero { grid-template-columns: 1fr; gap: 2rem; padding: 3rem 1.25rem 2rem; }
+}
+
+.hero-text { padding-top: 1rem; }
+
+.station-tag {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--leaf);
+  margin-bottom: 2rem;
+}
+
+.station-tag::before {
+  content: "";
+  width: 36px; height: 1px;
+  background: var(--leaf);
+}
+
+.station-tag-num {
+  color: var(--ink);
+  font-weight: 500;
+  border-left: 1px solid var(--rule);
+  padding-left: 0.85rem;
+  margin-left: 0.4rem;
+}
+
+h1.headline {
+  font-family: "Fraunces", serif;
+  font-weight: 320;
+  font-size: clamp(3.4rem, 9vw, 7.6rem);
+  line-height: 0.9;
+  letter-spacing: -0.045em;
+  color: var(--ink);
+  font-variation-settings: "opsz" 144, "SOFT" 100;
+  max-width: 14ch;
+}
+
+h1.headline em {
+  font-style: italic;
+  font-weight: 320;
+  color: var(--leaf);
+  position: relative;
+}
+
+h1.headline em::after {
+  content: "";
+  position: absolute;
+  left: -2%;
+  right: -2%;
+  bottom: 0.18em;
+  height: 0.05em;
+  background: var(--leaf-bright);
+  opacity: 0.4;
+  transform: skewY(-1deg);
+}
+
+.hero-sub {
+  margin-top: 2rem;
+  font-size: 1.15rem;
+  line-height: 1.55;
+  max-width: 46ch;
+  color: var(--ink-soft);
+}
+
+.hero-sub strong {
+  color: var(--ink);
+  font-weight: 500;
+}
+
+/* ─────── Live conditions strip ─────── */
+.conditions {
+  margin-top: 2.5rem;
+  padding: 1.25rem 1.5rem;
+  background: var(--paper-warm);
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  position: relative;
+}
+
+.conditions::before {
+  content: "LIVE · NIAGARA-ON-THE-LAKE";
+  position: absolute;
+  top: -7px;
+  left: 1.25rem;
+  background: var(--paper-warm);
+  padding: 0 0.5rem;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.2em;
+  color: var(--leaf);
+  font-weight: 500;
+}
+
+.conditions-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.25rem;
+}
+
+@media (max-width: 600px) {
+  .conditions-grid { grid-template-columns: repeat(2, 1fr); gap: 1rem; }
+}
+
+.condition .k {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.6rem;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--ink-soft);
+  opacity: 0.7;
+  margin-bottom: 0.4rem;
+}
+
+.condition .v {
+  font-family: "Fraunces", serif;
+  font-size: 1.6rem;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  font-variation-settings: "opsz" 60, "SOFT" 100;
+  color: var(--ink);
+  display: flex;
+  align-items: baseline;
+  gap: 0.2rem;
+}
+
+.condition .v small {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.7rem;
+  font-weight: 400;
+  color: var(--ink-soft);
+  letter-spacing: 0.04em;
+}
+
+.condition .advice {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.62rem;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--leaf);
+  margin-top: 0.5rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.condition .advice.is-warn { color: var(--alert); }
+.condition .advice.is-info { color: var(--signal); }
+
+.condition .advice::before {
+  content: "";
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+/* ═══════════════ SOIL PROFILE WIDGET ═══════════════ */
+.soil-widget {
+  position: relative;
+  background: var(--paper-warm);
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  padding: 1.5rem 1.5rem 1rem;
+  box-shadow:
+    0 1px 0 rgba(255,255,255,0.5) inset,
+    0 30px 60px -30px rgba(13,26,18,0.15);
+}
+
+.soil-widget-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 1rem;
+  margin-bottom: 0.5rem;
+  border-bottom: 1px solid var(--rule);
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.66rem;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--ink-soft);
+}
+
+.soil-widget-head strong {
+  color: var(--ink);
+  font-weight: 500;
+}
+
+.soil-widget-head .live {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--leaf);
+}
+
+.soil-widget-head .live::before {
+  content: "";
+  width: 6px; height: 6px;
+  background: var(--leaf-bright);
+  border-radius: 50%;
+  animation: pulse 2.4s infinite;
+}
+
+.soil-svg {
+  width: 100%;
+  height: auto;
+  display: block;
+  margin: 0 -0.5rem;
+}
+
+.soil-widget-foot {
+  margin-top: 0.5rem;
+  padding-top: 0.85rem;
+  border-top: 1px solid var(--rule);
+  display: flex;
+  justify-content: space-between;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.62rem;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--ink-soft);
+}
+
+.soil-widget-foot strong { color: var(--ink); font-weight: 500; }
+
+/* SVG element styling */
+.soil-svg .leaf-shape { transform-origin: 200px 175px; animation: sway 6s ease-in-out infinite; }
+@keyframes sway {
+  0%, 100% { transform: rotate(-1.5deg); }
+  50%      { transform: rotate(1.5deg); }
+}
+
+.soil-svg .drop {
+  animation: fall 4s linear infinite;
+  transform-origin: top;
+}
+.soil-svg .d1 { animation-delay: 0s; }
+.soil-svg .d2 { animation-delay: 0.7s; }
+.soil-svg .d3 { animation-delay: 1.4s; }
+.soil-svg .d4 { animation-delay: 2.1s; }
+.soil-svg .d5 { animation-delay: 2.8s; }
+
+@keyframes fall {
+  0%   { transform: translateY(-20px); opacity: 0; }
+  20%  { opacity: 0.6; }
+  90%  { opacity: 0.6; }
+  100% { transform: translateY(80px); opacity: 0; }
+}
+
+.soil-svg .root {
+  stroke-dasharray: 100;
+  stroke-dashoffset: 100;
+  animation: rootGrow 3s ease-out forwards;
+}
+.soil-svg .root.r1 { animation-delay: 0.6s; }
+.soil-svg .root.r2 { animation-delay: 0.9s; }
+.soil-svg .root.r3 { animation-delay: 1.2s; }
+.soil-svg .root.r4 { animation-delay: 1.5s; }
+.soil-svg .root.r5 { animation-delay: 1.8s; }
+
+@keyframes rootGrow { to { stroke-dashoffset: 0; } }
+
+.soil-svg .sensor-ring {
+  animation: ringPulse 3s ease-in-out infinite;
+  transform-origin: center;
+  transform-box: fill-box;
+}
+.soil-svg .sensor-ring.s2 { animation-delay: 1s; }
+.soil-svg .sensor-ring.s3 { animation-delay: 2s; }
+
+@keyframes ringPulse {
+  0%, 100% { opacity: 0.55; r: 5; }
+  50%      { opacity: 1; r: 6.5; }
+}
+
+/* ═══════════════ DATA STRIP (between hero and form) ═══════════════ */
+.divider-rule {
+  border: 0;
+  height: 1px;
+  background: var(--rule);
+  max-width: 1480px;
+  margin: 0 auto;
+}
+
+.cohort-strip {
+  max-width: 1480px;
+  margin: 0 auto;
+  padding: 2.5rem 2rem;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 2rem;
+  position: relative;
+  z-index: 2;
+}
+
+@media (max-width: 880px) {
+  .cohort-strip { grid-template-columns: 1fr; gap: 1.25rem; padding: 2rem 1.25rem; }
+}
+
+.cohort-label {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--ink-soft);
+}
+
+.cohort-label strong {
+  color: var(--ink);
+  font-family: "Fraunces", serif;
+  font-style: italic;
+  font-weight: 400;
+  font-size: 1.1rem;
+  text-transform: none;
+  letter-spacing: -0.01em;
+  margin-right: 0.4rem;
+  font-variation-settings: "opsz" 30, "SOFT" 100;
+}
+
+.spots-bar {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.spots-bar .spot {
+  width: 24px; height: 14px;
+  background: var(--leaf-bright);
+  opacity: 0.85;
+  position: relative;
+}
+
+.spots-bar .spot.taken {
+  background: var(--moss);
+  opacity: 1;
+}
+
+.spots-bar .spot.taken::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(45deg, transparent, transparent 2px, rgba(122,176,46,0.4) 2px, rgba(122,176,46,0.4) 3px);
+}
+
+.spots-bar .spot.open {
+  background: transparent;
+  border: 1px dashed var(--leaf);
+}
+
+.spots-count {
+  font-family: "Fraunces", serif;
+  font-size: 1.3rem;
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  font-variation-settings: "opsz" 60, "SOFT" 100;
+  color: var(--ink);
+}
+
+.spots-count em {
+  font-style: normal;
+  color: var(--leaf);
+  font-weight: 500;
+}
+
+@media (max-width: 880px) {
+  .spots-bar { flex-wrap: wrap; }
+}
+
+/* ═══════════════ FORM SECTION ═══════════════ */
+.form-wrap {
+  max-width: 1480px;
+  margin: 0 auto;
+  padding: 2rem 2rem 6rem;
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 4rem;
+  position: relative;
+  z-index: 2;
+}
+
+@media (max-width: 1100px) {
+  .form-wrap { grid-template-columns: 1fr; gap: 3rem; padding: 1rem 1.25rem 4rem; }
+}
+
+/* ─── Form card ─── */
+.form-card {
+  background: var(--paper-warm);
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  padding: 0;
+  box-shadow:
+    0 1px 0 rgba(255,255,255,0.5) inset,
+    0 30px 70px -30px rgba(13,26,18,0.18),
+    0 4px 14px -4px rgba(13,26,18,0.06);
+  overflow: hidden;
+  position: relative;
+}
+
+.form-header {
+  padding: 1.25rem 2.25rem;
+  background: var(--ink);
+  color: var(--paper);
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 1rem;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.66rem;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  position: relative;
+  overflow: hidden;
+}
+
+.form-header::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 60% 100% at 100% 50%, rgba(122,176,46,0.18), transparent 60%);
+  pointer-events: none;
+}
+
+.form-header > * { position: relative; }
+
+.form-header .file-tag {
+  color: var(--leaf-bright);
+  border-right: 1px solid rgba(242,235,211,0.2);
+  padding-right: 1rem;
+}
+
+.form-header .doc-id {
+  color: rgba(242,235,211,0.5);
+  letter-spacing: 0.14em;
+}
+
+.form-header .doc-id strong {
+  color: var(--paper);
+  font-weight: 500;
+  margin-left: 0.4rem;
+}
+
+.form-header .save-state {
+  color: rgba(242,235,211,0.65);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.form-header .save-state::before {
+  content: "";
+  width: 5px; height: 5px;
+  background: var(--leaf-bright);
+  border-radius: 50%;
+}
+
+.form-body {
+  padding: 2.5rem 2.25rem 2rem;
+}
+
+@media (max-width: 640px) {
+  .form-header { padding: 1rem 1.25rem; gap: 0.75rem; }
+  .form-header .doc-id { display: none; }
+  .form-body { padding: 1.75rem 1.25rem 1.5rem; }
+}
+
+/* ─── Step indicator ─── */
+.steps-rail {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.5rem;
+  margin-bottom: 2.5rem;
+}
+
+.step-pill {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.62rem;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--ink-soft);
+  padding: 0.65rem 0.5rem;
+  border-top: 2px solid var(--rule);
+  cursor: pointer;
+  transition: all 0.3s var(--ease);
+  opacity: 0.55;
+  text-align: left;
+  background: transparent;
+  border-left: 0;
+  border-right: 0;
+  border-bottom: 0;
+}
+
+.step-pill:hover { opacity: 0.8; }
+
+.step-pill .step-num {
+  display: block;
+  font-size: 0.58rem;
+  opacity: 0.7;
+  margin-bottom: 0.25rem;
+}
+
+.step-pill .step-name {
+  color: inherit;
+  font-weight: 500;
+}
+
+.step-pill.is-active {
+  border-top-color: var(--leaf);
+  color: var(--ink);
+  opacity: 1;
+}
+
+.step-pill.is-done {
+  border-top-color: var(--leaf-bright);
+  opacity: 0.85;
+  color: var(--moss);
+}
+
+.step-pill.is-done .step-name::after {
+  content: " ✓";
+  color: var(--leaf-bright);
+}
+
+@media (max-width: 640px) {
+  .step-pill { font-size: 0.56rem; padding: 0.55rem 0.3rem; }
+  .step-pill .step-num { font-size: 0.52rem; }
+}
+
+/* ─── Step content ─── */
+.step-panel {
+  display: none;
+}
+
+.step-panel.is-active {
+  display: block;
+  animation: stepIn 0.5s var(--ease) both;
+}
+
+@keyframes stepIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.step-eyebrow {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.62rem;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--leaf);
+  margin-bottom: 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.step-eyebrow .depth-badge {
+  padding: 0.2rem 0.5rem;
+  background: var(--leaf);
+  color: var(--paper);
+  border-radius: 2px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+}
+
+.step-title {
+  font-family: "Fraunces", serif;
+  font-weight: 350;
+  font-size: clamp(1.7rem, 3vw, 2.2rem);
+  line-height: 1.05;
+  letter-spacing: -0.025em;
+  font-variation-settings: "opsz" 100, "SOFT" 100;
+  margin-bottom: 0.6rem;
+  max-width: 22ch;
+}
+
+.step-title em { font-style: italic; color: var(--leaf); }
+
+.step-help {
+  color: var(--ink-soft);
+  font-size: 0.97rem;
+  margin-bottom: 2.25rem;
+  max-width: 50ch;
+}
+
+/* ─── Fields ─── */
+.field {
+  position: relative;
+  margin-bottom: 1.85rem;
+}
+
+.field input,
+.field textarea {
+  width: 100%;
+  padding: 1.55rem 0 0.65rem;
+  font: inherit;
+  font-size: 1.05rem;
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid var(--rule);
+  border-radius: 0;
+  color: var(--ink);
+  transition: border-color 0.25s;
+  outline: none;
+  resize: vertical;
+  font-family: inherit;
+}
+
+.field textarea { min-height: 4rem; }
+
+.field input:focus,
+.field textarea:focus { border-bottom-color: var(--moss); }
+
+.field--error input,
+.field--error textarea { border-bottom-color: var(--alert, #C0392B); }
+.field--error label { color: var(--alert, #C0392B) !important; }
+.field-error {
+  display: block;
+  margin-top: 0.45rem;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.04em;
+  color: var(--alert, #C0392B);
+}
+
+.field input::placeholder,
+.field textarea::placeholder { color: transparent; }
+
+.field label {
+  position: absolute;
+  top: 1.55rem;
+  left: 0;
+  font-size: 1.05rem;
+  color: var(--ink-soft);
+  pointer-events: none;
+  transition: all 0.25s var(--ease);
+  transform-origin: 0 0;
+}
+
+.field label .opt {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.78rem;
+  color: var(--ink-soft);
+  opacity: 0.62;
+  margin-left: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+
+.field input:focus + label,
+.field input:not(:placeholder-shown) + label,
+.field textarea:focus + label,
+.field textarea:not(:placeholder-shown) + label {
+  transform: translateY(-1.45rem) scale(0.78);
+  color: var(--leaf);
+  letter-spacing: 0.04em;
+}
+
+.field-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+}
+
+@media (max-width: 600px) {
+  .field-row { grid-template-columns: 1fr; gap: 0; }
+}
+
+/* ─── Step nav ─── */
+.step-nav {
+  margin-top: 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 1rem 1.85rem;
+  border-radius: 999px;
+  font: inherit;
+  font-size: 0.95rem;
+  font-weight: 500;
+  letter-spacing: 0.005em;
+  cursor: pointer;
+  transition: all 0.25s var(--ease);
+  border: 0;
+  text-decoration: none;
+}
+
+.btn-primary {
+  background: var(--moss);
+  color: var(--paper);
+  box-shadow: 0 1px 0 rgba(255,255,255,0.06) inset, 0 4px 14px -4px rgba(13,26,18,0.4);
+}
+
+.btn-primary:hover {
+  background: var(--ink);
+  transform: translateY(-1px);
+  box-shadow: 0 1px 0 rgba(255,255,255,0.06) inset, 0 14px 30px -10px rgba(13,26,18,0.5);
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--ink-soft);
+  padding-left: 0;
+  padding-right: 1rem;
+}
+
+.btn-ghost:hover { color: var(--moss); }
+
+.btn svg { width: 1rem; height: 1rem; transition: transform 0.25s; }
+.btn-primary:hover svg { transform: translateX(4px); }
+.btn-ghost:hover svg { transform: translateX(-4px); }
+
+/* ─── Review step ─── */
+.review-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem 2rem;
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  background: var(--paper);
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+}
+
+@media (max-width: 600px) { .review-grid { grid-template-columns: 1fr; } }
+
+.review-row .k {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.6rem;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--ink-soft);
+  opacity: 0.7;
+  margin-bottom: 0.3rem;
+}
+
+.review-row .v {
+  font-family: "Fraunces", serif;
+  font-size: 1.1rem;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  font-variation-settings: "opsz" 30, "SOFT" 80;
+  color: var(--ink);
+  word-break: break-word;
+}
+
+.review-row .v.empty { color: var(--ink-soft); opacity: 0.5; font-style: italic; }
+
+/* ─── Success state ─── */
+.success { display: none; padding: 0.5rem 0; }
+
+.form-card.is-submitted .step-form { display: none; }
+.form-card.is-submitted .steps-rail { display: none; }
+.form-card.is-submitted .success { display: block; animation: stepIn 0.7s var(--ease) both; }
+
+.success-mark {
+  width: 3.5rem; height: 3.5rem;
+  border-radius: 50%;
+  background: var(--leaf-bright);
+  color: var(--ink);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+}
+
+.success h3 {
+  font-family: "Fraunces", serif;
+  font-size: clamp(1.7rem, 3vw, 2.2rem);
+  font-weight: 350;
+  line-height: 1.05;
+  font-variation-settings: "opsz" 100, "SOFT" 100;
+  margin-bottom: 1rem;
+  letter-spacing: -0.025em;
+}
+
+.success h3 em { font-style: italic; color: var(--leaf); }
+
+.success p {
+  color: var(--ink-soft);
+  max-width: 44ch;
+  margin-bottom: 0.85rem;
+  font-size: 1rem;
+}
+
+.success-fallback {
+  margin-top: 2rem;
+  padding: 1.25rem 1.5rem;
+  background: var(--paper);
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.78rem;
+  color: var(--ink);
+  line-height: 1.6;
+}
+
+.success-fallback a { color: var(--moss); }
+
+/* ═══════════════ SIDEBAR ═══════════════ */
+.sidebar { position: sticky; top: 6rem; height: fit-content; display: grid; gap: 2rem; }
+
+@media (max-width: 1100px) { .sidebar { position: static; } }
+
+/* ─── Trial preview card ─── */
+.preview {
+  background: var(--ink);
+  color: var(--paper);
+  border-radius: 6px;
+  padding: 2rem 2rem 1.5rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.preview::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 90% 100% at 100% 0%, rgba(122,176,46,0.2), transparent 60%),
+    radial-gradient(ellipse 60% 80% at 0% 100%, rgba(184,111,68,0.1), transparent 60%);
+  pointer-events: none;
+}
+
+.preview > * { position: relative; }
+
+.preview-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.62rem;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+}
+
+.preview-head .label { color: var(--leaf-bright); }
+.preview-head .stamp { color: rgba(242,235,211,0.5); }
+
+.preview-farm {
+  font-family: "Fraunces", serif;
+  font-size: 1.85rem;
+  font-weight: 350;
+  line-height: 1.05;
+  letter-spacing: -0.025em;
+  font-variation-settings: "opsz" 100, "SOFT" 100;
+  color: var(--paper);
+  margin-bottom: 0.4rem;
+  min-height: 2rem;
+}
+
+.preview-farm em { font-style: italic; color: var(--leaf-bright); }
+.preview-farm .placeholder { color: rgba(242,235,211,0.35); font-style: italic; }
+
+.preview-name {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: rgba(242,235,211,0.7);
+  margin-bottom: 1.5rem;
+}
+
+.preview-meta {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+  margin-bottom: 1.5rem;
+  padding: 1.25rem 0;
+  border-top: 1px solid rgba(242,235,211,0.18);
+  border-bottom: 1px solid rgba(242,235,211,0.18);
+}
+
+.preview-meta .k {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.58rem;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: rgba(242,235,211,0.6);
+  margin-bottom: 0.3rem;
+}
+
+.preview-meta .v {
+  font-family: "Fraunces", serif;
+  font-size: 1.45rem;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  font-variation-settings: "opsz" 60, "SOFT" 100;
+  color: var(--paper);
+  display: flex;
+  align-items: baseline;
+  gap: 0.25rem;
+}
+
+.preview-meta .v small {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.65rem;
+  color: rgba(242,235,211,0.5);
+  font-weight: 400;
+  letter-spacing: 0.04em;
+}
+
+.preview-includes {
+  list-style: none;
+  display: grid;
+  gap: 0.6rem;
+  font-size: 0.85rem;
+  color: rgba(242,235,211,0.85);
+}
+
+.preview-includes li {
+  display: grid;
+  grid-template-columns: 1rem 1fr auto;
+  align-items: baseline;
+  gap: 0.6rem;
+}
+
+.preview-includes li::before {
+  content: "+";
+  color: var(--leaf-bright);
+  font-family: "JetBrains Mono", monospace;
+  font-weight: 500;
+}
+
+.preview-includes .pill {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.6rem;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--leaf-bright);
+}
+
+/* ═══════════════ COHORT MAP SECTION ═══════════════ */
+.cohort-section {
+  position: relative;
+  z-index: 2;
+  padding: 4.5rem 2rem 2rem;
+  max-width: 1480px;
+  margin: 0 auto;
+}
+
+@media (max-width: 1100px) {
+  .cohort-section { padding: 2.5rem 1.25rem 1rem; }
+}
+
+.cohort-header {
+  display: grid;
+  grid-template-columns: 1fr 1.1fr;
+  gap: 4rem;
+  align-items: end;
+  margin-bottom: 2.5rem;
+}
+
+@media (max-width: 880px) {
+  .cohort-header { grid-template-columns: 1fr; gap: 1rem; margin-bottom: 1.5rem; }
+}
+
+.cohort-eyebrow {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--leaf);
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  margin-bottom: 1.25rem;
+}
+
+.cohort-eyebrow::before {
+  content: "";
+  width: 36px; height: 1px;
+  background: var(--leaf);
+}
+
+.cohort-h2 {
+  font-family: "Fraunces", serif;
+  font-weight: 320;
+  font-size: clamp(2.2rem, 5vw, 3.8rem);
+  line-height: 0.95;
+  letter-spacing: -0.04em;
+  font-variation-settings: "opsz" 144, "SOFT" 100;
+  color: var(--ink);
+  max-width: 16ch;
+}
+
+.cohort-h2 em {
+  font-style: italic;
+  color: var(--leaf);
+  font-weight: 320;
+}
+
+.cohort-lede {
+  font-size: 1.05rem;
+  line-height: 1.55;
+  color: var(--ink-soft);
+  max-width: 50ch;
+}
+
+.cohort-lede strong { color: var(--ink); font-weight: 500; }
+
+.cohort-map-wrap {
+  display: grid;
+  grid-template-columns: 1.65fr 1fr;
+  gap: 2rem;
+  align-items: stretch;
+}
+
+@media (max-width: 1100px) {
+  .cohort-map-wrap { grid-template-columns: 1fr; gap: 1.25rem; }
+}
+
+/* The map itself */
+.cohort-map {
+  position: relative;
+  background: var(--paper-warm);
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  padding: 1rem 1rem 0.75rem;
+  box-shadow: 0 1px 0 rgba(255,255,255,0.5) inset, 0 30px 60px -30px rgba(13,26,18,0.18);
+}
+
+.cohort-map-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.25rem 0.5rem 0.85rem;
+  border-bottom: 1px solid var(--rule);
+  margin-bottom: 0.5rem;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.62rem;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--ink-soft);
+}
+
+.cohort-map-head strong { color: var(--ink); font-weight: 500; }
+
+.cohort-map-head .live-tag {
+  color: var(--leaf);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.cohort-map-head .live-tag::before {
+  content: "";
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--leaf-bright);
+  animation: pulse 2.4s infinite;
+}
+
+.niagara-svg {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 4px;
+}
+
+/* Lakes */
+.niagara-svg .lake {
+  fill: #C7D8DE;
+  fill-opacity: 0.7;
+  stroke: #3B6B7E;
+  stroke-width: 0.6;
+  stroke-opacity: 0.35;
+}
+
+.niagara-svg .lake-label {
+  font-family: "Fraunces", serif;
+  font-style: italic;
+  font-size: 24px;
+  letter-spacing: 0.04em;
+  fill: #3B6B7E;
+  font-variation-settings: "opsz" 60, "SOFT" 100;
+  font-weight: 400;
+}
+
+/* Municipalities */
+.niagara-svg .muni {
+  fill: var(--paper);
+  stroke: var(--ink);
+  stroke-width: 0.7;
+  stroke-opacity: 0.32;
+  transition: fill 0.35s var(--ease), stroke-opacity 0.35s;
+}
+
+.niagara-svg .muni.is-active {
+  fill: rgba(122,176,46,0.18);
+  stroke-opacity: 0.55;
+}
+
+.niagara-svg .muni:hover {
+  fill: rgba(122,176,46,0.36);
+  stroke-opacity: 0.7;
+  cursor: crosshair;
+}
+
+/* Cities */
+.niagara-svg .city-dot { fill: var(--ink); }
+.niagara-svg .city-major .city-dot { r: 3.5; }
+.niagara-svg .city-minor .city-dot { r: 2.2; opacity: 0.55; }
+
+.niagara-svg .city-label {
+  font-family: "JetBrains Mono", monospace;
+  letter-spacing: 0.16em;
+  fill: var(--ink);
+  text-transform: uppercase;
+  font-weight: 500;
+}
+
+.niagara-svg .city-major .city-label { font-size: 13px; }
+.niagara-svg .city-minor .city-label { font-size: 11px; opacity: 0.55; letter-spacing: 0.12em; font-weight: 400; }
+
+/* Niagara River label */
+.niagara-svg .river-label {
+  font-family: "Fraunces", serif;
+  font-style: italic;
+  font-size: 14px;
+  letter-spacing: 0.04em;
+  fill: #3B6B7E;
+  opacity: 0.7;
+  font-variation-settings: "opsz" 30, "SOFT" 100;
+}
+
+/* Active farm dots */
+.niagara-svg .farm-dot {
+  fill: var(--leaf-bright);
+  stroke: var(--ink);
+  stroke-width: 1;
+  transition: r 0.25s var(--ease), filter 0.25s;
+}
+
+.niagara-svg .farm-dot:hover,
+.niagara-svg .farm-dot.is-highlighted {
+  r: 12;
+  filter: drop-shadow(0 0 10px rgba(122,176,46,0.55));
+  cursor: crosshair;
+}
+
+.niagara-svg .open-spot.is-highlighted {
+  animation-play-state: paused;
+  stroke-width: 2.4;
+  opacity: 1;
+  filter: drop-shadow(0 0 10px rgba(92,138,60,0.5));
+}
+
+.niagara-svg .ngr04-beacon.is-highlighted .beacon-core {
+  r: 9;
+  filter: drop-shadow(0 0 12px rgba(122,176,46,0.7));
+}
+
+.station-row.is-highlighted {
+  background: rgba(122,176,46,0.08);
+  padding-left: 0.5rem;
+}
+
+/* Open spots */
+.niagara-svg .open-spot {
+  fill: rgba(122,176,46,0.06);
+  stroke: var(--leaf);
+  stroke-width: 1.4;
+  stroke-dasharray: 4 3;
+  animation: openPulse 3s ease-in-out infinite;
+  transform-origin: center;
+  transform-box: fill-box;
+}
+
+@keyframes openPulse {
+  0%, 100% { opacity: 0.55; r: 9; }
+  50%      { opacity: 1; r: 13; }
+}
+
+/* NGR-04 beacon — the live station */
+.niagara-svg .beacon-pulse {
+  fill: rgba(122,176,46,0.18);
+  stroke: var(--leaf-bright);
+  stroke-width: 1;
+  animation: beacon 3s ease-out infinite;
+  transform-origin: center;
+  transform-box: fill-box;
+  opacity: 0;
+}
+
+.niagara-svg .beacon-pulse-2 { animation-delay: 1.5s; }
+
+@keyframes beacon {
+  0%   { transform: scale(0.4); opacity: 0; }
+  18%  { opacity: 0.9; }
+  100% { transform: scale(2.4); opacity: 0; }
+}
+
+.niagara-svg .beacon-core {
+  fill: var(--leaf-bright);
+  stroke: var(--ink);
+  stroke-width: 1.2;
+}
+
+.niagara-svg .beacon-line {
+  stroke: var(--ink);
+  stroke-width: 1;
+}
+
+.niagara-svg .beacon-label {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 13px;
+  letter-spacing: 0.18em;
+  fill: var(--moss);
+  font-weight: 500;
+}
+
+/* Compass + scale */
+.niagara-svg .compass-text {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  fill: var(--ink);
+  font-weight: 500;
+}
+
+.niagara-svg .scale-bar { stroke: var(--ink); stroke-width: 1.2; }
+.niagara-svg .scale-text {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  fill: var(--ink-soft);
+}
+
+/* Map foot */
+.cohort-map-foot {
+  margin-top: 0.5rem;
+  padding-top: 0.85rem;
+  border-top: 1px solid var(--rule);
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.85rem;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.62rem;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--ink-soft);
+}
+
+.cohort-map-foot .legend {
+  display: flex;
+  gap: 1.25rem;
+  flex-wrap: wrap;
+}
+
+.cohort-map-foot .legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  letter-spacing: 0.14em;
+}
+
+.cohort-map-foot .legend .swatch {
+  width: 11px; height: 11px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.cohort-map-foot .legend .sw-active { background: var(--leaf-bright); border: 1px solid var(--ink); }
+.cohort-map-foot .legend .sw-open   { background: transparent; border: 1.4px dashed var(--leaf); }
+.cohort-map-foot .legend .sw-live   { background: var(--leaf-bright); box-shadow: 0 0 0 3px rgba(122,176,46,0.35); }
+
+/* Stations panel */
+.cohort-stations {
+  background: var(--ink);
+  color: var(--paper);
+  border-radius: 6px;
+  padding: 1.5rem 1.5rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+}
+
+.cohort-stations::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 90% 100% at 100% 0%, rgba(122,176,46,0.18), transparent 60%),
+    radial-gradient(ellipse 60% 80% at 0% 100%, rgba(184,111,68,0.08), transparent 60%);
+  pointer-events: none;
+}
+
+.cohort-stations > * { position: relative; }
+
+.cohort-stations-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid rgba(242,235,211,0.18);
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.62rem;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: rgba(242,235,211,0.55);
+}
+
+.cohort-stations-head strong { color: var(--paper); font-weight: 500; }
+
+.stations-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  flex: 1;
+}
+
+.station-row {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 0.85rem;
+  align-items: center;
+  padding: 0.65rem 0;
+  border-bottom: 1px solid rgba(242,235,211,0.07);
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.06em;
+  transition: padding 0.25s var(--ease);
+}
+
+.station-row:last-child { border-bottom: 0; }
+.station-row:hover { padding-left: 0.4rem; }
+
+.station-row .sid {
+  color: var(--leaf-bright);
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  font-size: 0.7rem;
+}
+
+.station-row .sname {
+  font-family: "Fraunces", serif;
+  font-size: 0.95rem;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  font-variation-settings: "opsz" 30, "SOFT" 100;
+  color: var(--paper);
+  text-transform: none;
+}
+
+.station-row .srt {
+  font-size: 0.6rem;
+  color: rgba(242,235,211,0.65);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+}
+
+.station-row .srt.warn { color: var(--alert); }
+.station-row .srt.live {
+  color: var(--leaf-bright);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.station-row .srt.live::before {
+  content: "";
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: var(--leaf-bright);
+  animation: pulse 2.4s infinite;
+}
+
+.station-row.is-open .sid { color: rgba(242,235,211,0.4); }
+.station-row.is-open .sname { color: rgba(242,235,211,0.55); font-style: italic; }
+.station-row.is-open .srt { color: var(--leaf); }
+
+.cohort-stations-foot {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(242,235,211,0.18);
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.62rem;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: rgba(242,235,211,0.55);
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.cohort-stations-foot strong { color: var(--leaf-bright); font-weight: 500; }
+
+/* ═══════════════ FOUNDERS ═══════════════ */
+.founders {
+  background: var(--ink);
+  color: var(--paper);
+  padding: 6rem 2rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.founders::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 50% 70% at 100% 100%, rgba(122,176,46,0.14), transparent 60%),
+    radial-gradient(ellipse 40% 60% at 0% 0%, rgba(184,111,68,0.08), transparent 60%);
+  pointer-events: none;
+}
+
+.founders::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(242,235,211,0.025) 0.5px, transparent 0.5px),
+    linear-gradient(90deg, rgba(242,235,211,0.025) 0.5px, transparent 0.5px);
+  background-size: 32px 32px;
+  pointer-events: none;
+}
+
+.founders-inner {
+  max-width: 1480px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1.2fr;
+  gap: 5rem;
+  align-items: end;
+  position: relative;
+  z-index: 2;
+}
+
+@media (max-width: 900px) {
+  .founders-inner { grid-template-columns: 1fr; gap: 2rem; }
+  .founders { padding: 4rem 1.25rem; }
+}
+
+.founders-eyebrow {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--leaf-bright);
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+.founders-eyebrow::before {
+  content: "";
+  width: 36px; height: 1px;
+  background: var(--leaf-bright);
+}
+
+.founders h2 {
+  font-family: "Fraunces", serif;
+  font-weight: 320;
+  font-size: clamp(2.5rem, 5.5vw, 4.6rem);
+  line-height: 0.95;
+  letter-spacing: -0.04em;
+  font-variation-settings: "opsz" 144, "SOFT" 100;
+  color: var(--paper);
+}
+
+.founders h2 em { font-style: italic; color: var(--leaf-bright); font-weight: 320; }
+
+.founders-text p {
+  font-size: 1.1rem;
+  line-height: 1.6;
+  color: rgba(242,235,211,0.85);
+  margin-bottom: 1rem;
+  max-width: 54ch;
+}
+
+.founders-sig {
+  margin-top: 2rem;
+  font-family: "Caveat", cursive;
+  font-weight: 600;
+  font-size: 2.3rem;
+  color: var(--leaf-bright);
+  letter-spacing: -0.01em;
+  line-height: 1.1;
+}
+
+.founders-sig small {
+  display: block;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.65rem;
+  color: rgba(242,235,211,0.55);
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  margin-top: 0.4rem;
+  font-weight: 400;
+}
+
+/* ═══════════════ FOOTER ═══════════════ */
+footer {
+  padding: 3.5rem 2rem 2.5rem;
+  border-top: 1px solid var(--rule);
+  background: var(--paper);
+  position: relative;
+  z-index: 2;
+}
+
+.footer-inner {
+  max-width: 1480px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 2rem 3rem;
+  align-items: end;
+}
+
+@media (max-width: 700px) { .footer-inner { grid-template-columns: 1fr; } }
+
+.footer-mark {
+  font-family: "Fraunces", serif;
+  font-size: 1.5rem;
+  font-weight: 500;
+  letter-spacing: -0.025em;
+  font-variation-settings: "opsz" 60, "SOFT" 80;
+  margin-bottom: 0.75rem;
+  display: flex;
+  gap: 0.6rem;
+  align-items: center;
+}
+
+.footer-mark em { font-style: italic; color: var(--leaf); font-weight: 400; }
+
+.footer-tag {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--ink-soft);
+  opacity: 0.75;
+}
+
+.footer-contact {
+  display: flex;
+  gap: 2.5rem;
+  flex-wrap: wrap;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+}
+
+.footer-contact a {
+  color: var(--ink);
+  text-decoration: none;
+  border-bottom: 1px solid var(--rule);
+  padding-bottom: 1px;
+  transition: border-color 0.25s, color 0.25s;
+}
+
+.footer-contact a:hover { border-bottom-color: var(--leaf); color: var(--moss); }
+
+.footer-contact .k {
+  display: block;
+  font-size: 0.6rem;
+  letter-spacing: 0.18em;
+  opacity: 0.55;
+  margin-bottom: 0.4rem;
+  color: var(--ink-soft);
+}
+
+.coords {
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--rule-soft);
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.62rem;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--ink-soft);
+  opacity: 0.6;
+  display: flex;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+/* ═══════════════ ENTRY ANIMATIONS ═══════════════ */
+@keyframes rise {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.anim { opacity: 0; animation: rise 0.85s var(--ease) forwards; }
+.d1 { animation-delay: 0.05s; }
+.d2 { animation-delay: 0.18s; }
+.d3 { animation-delay: 0.34s; }
+.d4 { animation-delay: 0.5s; }
+.d5 { animation-delay: 0.66s; }
+.d6 { animation-delay: 0.82s; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   MOBILE TUNING
+   The page is QR-scanned from print, so primary use is portrait phone.
+   ─────────────────────────────────────────────────────────────── */
+
+/* Tablet — bump SVG fonts ~1.5x for legibility at smaller container sizes */
+@media (max-width: 1100px) {
+  .niagara-svg .city-major .city-label { font-size: 17px; }
+  .niagara-svg .city-minor .city-label { font-size: 14px; }
+  .niagara-svg .lake-label { font-size: 30px; }
+  .niagara-svg .beacon-label { font-size: 17px; letter-spacing: 0.16em; }
+  .niagara-svg .compass-text { font-size: 13px; }
+  .niagara-svg .scale-text { font-size: 13px; }
+  .niagara-svg .map-stat-block text:nth-child(-n+2) { font-size: 24px; }
+}
+
+/* Phone — strip the map back to essentials, scale remaining text up ~2.5x */
+@media (max-width: 700px) {
+  /* Hide non-essential map chrome */
+  .niagara-svg .map-stat-block { display: none; }
+  .niagara-svg .city-minor { display: none; }
+
+  /* Bump remaining text */
+  .niagara-svg .city-major .city-label { font-size: 26px; letter-spacing: 0.12em; }
+  .niagara-svg .lake-label { font-size: 38px; }
+  .niagara-svg .beacon-label { font-size: 24px; letter-spacing: 0.16em; }
+  .niagara-svg .compass-text { font-size: 16px; }
+  .niagara-svg .scale-text { font-size: 16px; }
+
+  /* Larger dots for tap-friendliness */
+  .niagara-svg .farm-dot { r: 14; cursor: pointer; }
+  .niagara-svg .open-spot { stroke-width: 2; }
+  .station-row[data-link] { cursor: pointer; }
+  .niagara-svg .ngr04-beacon .beacon-core { r: 10; }
+  .niagara-svg .ngr04-beacon .beacon-pulse { r: 16; }
+
+  /* Compass slightly smaller (less weight at small size) */
+  .niagara-svg .map-grid { display: none; }
+}
+
+/* Soil widget readouts — bump for legibility on phone */
+@media (max-width: 1100px) {
+  .soil-svg text { font-size: 11px; }
+  .soil-svg [id^="r1-moisture"],
+  .soil-svg [id^="r2-moisture"],
+  .soil-svg [id^="r3-moisture"] { font-size: 16px; }
+  .soil-svg [id^="r1-temp"],
+  .soil-svg [id^="r2-temp"],
+  .soil-svg [id^="r3-temp"] { font-size: 13px; }
+}
+
+@media (max-width: 700px) {
+  .soil-svg text { font-size: 14px; }
+  .soil-svg [id^="r1-moisture"],
+  .soil-svg [id^="r2-moisture"],
+  .soil-svg [id^="r3-moisture"] { font-size: 22px; }
+  .soil-svg [id^="r1-temp"],
+  .soil-svg [id^="r2-temp"],
+  .soil-svg [id^="r3-temp"] { font-size: 17px; }
+  .soil-svg [id^="r1-status"],
+  .soil-svg [id^="r2-status"],
+  .soil-svg [id^="r3-status"] { font-size: 11px; }
+}
+
+/* Hero spacing */
+@media (max-width: 700px) {
+  .hero { padding: 2.5rem 1.1rem 1.5rem; gap: 2rem; }
+  h1.headline { font-size: clamp(2.8rem, 14vw, 4.5rem); }
+  .station-tag { font-size: 0.62rem; gap: 0.6rem; margin-bottom: 1.25rem; }
+  .station-tag::before { width: 24px; }
+  .hero-sub { font-size: 1.05rem; margin-top: 1.5rem; }
+  .hero-meta { margin-top: 2rem; gap: 1.5rem 2rem; }
+  .conditions { padding: 1.25rem 1rem; margin-top: 1.75rem; }
+  .conditions::before { left: 1rem; font-size: 0.55rem; }
+}
+
+/* Conditions strip — single column on tiny screens */
+@media (max-width: 380px) {
+  .conditions-grid { grid-template-columns: 1fr; gap: 0.85rem; }
+  .condition .v { font-size: 1.4rem; }
+}
+
+/* Cohort header tightening */
+@media (max-width: 700px) {
+  .cohort-section { padding: 2rem 1.1rem 1rem; }
+  .cohort-h2 { font-size: clamp(1.9rem, 8vw, 2.7rem); }
+  .cohort-eyebrow { font-size: 0.6rem; letter-spacing: 0.16em; }
+  .cohort-eyebrow::before { width: 24px; }
+  .cohort-lede { font-size: 1rem; }
+  .cohort-header { margin-bottom: 1.5rem; }
+}
+
+/* Cohort map card — less padding, no horizontal scroll */
+@media (max-width: 700px) {
+  .cohort-map { padding: 0.75rem 0.75rem 0.5rem; }
+  .cohort-map-head { padding: 0.25rem 0.35rem 0.65rem; font-size: 0.56rem; gap: 0.5rem; flex-wrap: wrap; }
+  .cohort-map-foot { font-size: 0.56rem; gap: 0.5rem; }
+  .cohort-map-foot .legend { gap: 0.85rem; }
+}
+
+/* Stations panel — denser on phone */
+@media (max-width: 1100px) {
+  .cohort-stations { padding: 1.25rem 1.25rem 1rem; }
+}
+
+@media (max-width: 700px) {
+  .cohort-stations { padding: 1.1rem 1rem 0.85rem; }
+  .cohort-stations-head { font-size: 0.56rem; padding-bottom: 0.75rem; margin-bottom: 0.75rem; }
+  .station-row {
+    padding: 0.55rem 0;
+    font-size: 0.62rem;
+    grid-template-columns: 56px 1fr auto;
+    gap: 0.6rem;
+  }
+  .station-row .sid { font-size: 0.62rem; }
+  .station-row .sname { font-size: 0.85rem; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .station-row .srt { font-size: 0.55rem; letter-spacing: 0.1em; }
+  .cohort-stations-foot { font-size: 0.56rem; }
+}
+
+/* Soil widget — tighter on mobile */
+@media (max-width: 700px) {
+  .soil-widget { padding: 1rem 0.85rem 0.65rem; }
+  .soil-widget-head { font-size: 0.58rem; padding-bottom: 0.75rem; }
+  .soil-widget-foot { font-size: 0.55rem; gap: 0.4rem; flex-wrap: wrap; }
+}
+
+/* Form card — more breathing room on phone */
+@media (max-width: 700px) {
+  .form-wrap { padding: 0.75rem 1rem 3.5rem; }
+  .form-card { border-radius: 4px; }
+  .form-header { padding: 0.85rem 1rem; font-size: 0.58rem; }
+  .form-header .file-tag { padding-right: 0.65rem; }
+  .form-header .doc-id { display: none; }
+  .form-body { padding: 1.5rem 1.1rem 1.25rem; }
+
+  .step-title { font-size: clamp(1.5rem, 6.5vw, 2rem); }
+  .step-help { font-size: 0.92rem; margin-bottom: 1.75rem; }
+
+  .field { margin-bottom: 1.5rem; }
+  .field input, .field textarea { font-size: 16px; }  /* prevent iOS zoom */
+  .field label { font-size: 1rem; }
+
+  .btn { font-size: 0.9rem; padding: 0.95rem 1.4rem; }
+}
+
+/* Step pill rail — keep all 4 visible at narrow widths.
+   Tap targets stay ≥44px tall by padding generously. */
+@media (max-width: 600px) {
+  .steps-rail { gap: 0.4rem; margin-bottom: 1.85rem; }
+  .step-pill {
+    padding: 0.95rem 0.35rem;
+    font-size: 0.58rem;
+    letter-spacing: 0.1em;
+    min-height: 44px;
+  }
+  .step-pill .step-num { font-size: 0.55rem; margin-bottom: 0.25rem; }
+  .step-pill .step-name { font-size: 0.6rem; }
+}
+
+/* Tiny phones — show only step number, hide name. Keep min-height. */
+@media (max-width: 380px) {
+  .step-pill {
+    padding: 0.95rem 0.25rem;
+    min-height: 44px;
+    text-align: center;
+  }
+  .step-pill .step-name { display: none; }
+  .step-pill .step-num { font-size: 0.7rem; margin-bottom: 0; }
+}
+
+/* Cohort strip — clean stacking on phone */
+@media (max-width: 700px) {
+  .cohort-strip { padding: 1.5rem 1.1rem; gap: 1rem; }
+  .cohort-label { font-size: 0.65rem; line-height: 1.5; }
+  .spots-bar { gap: 4px; }
+  .spots-bar .spot { width: 18px; height: 12px; }
+  .spots-count { font-size: 1.1rem; }
+}
+
+/* Founders compaction */
+@media (max-width: 700px) {
+  .founders { padding: 3.5rem 1.25rem; }
+  .founders-text p { font-size: 1rem; }
+  .founders-sig { font-size: 1.85rem; margin-top: 1.5rem; }
+}
+
+/* Footer compaction */
+@media (max-width: 700px) {
+  footer { padding: 2.5rem 1.25rem 2rem; }
+  .footer-contact { gap: 1.5rem; }
+  .coords { gap: 1rem; font-size: 0.55rem; }
+}
+
+/* Topbar — tighter on tiny phones */
+@media (max-width: 480px) {
+  .brand { font-size: 1.2rem; }
+  .topbar-inner { padding: 0.85rem 1rem; gap: 0.75rem; }
+  .topbar-right { font-size: 0.58rem; gap: 0.5rem; letter-spacing: 0.12em; }
+}
+
+/* Trial preview — phone tuning */
+@media (max-width: 700px) {
+  .preview { padding: 1.5rem 1.25rem 1.1rem; }
+  .preview-farm { font-size: 1.55rem; }
+  .preview-meta { gap: 1rem; padding: 1rem 0; margin-bottom: 1.1rem; }
+  .preview-meta .v { font-size: 1.25rem; }
+  .preview-includes { font-size: 0.78rem; }
+}
+
+/* ─── Floating "Book Trial" CTA (mobile only) ─── */
+.fab {
+  position: fixed;
+  bottom: max(1.1rem, env(safe-area-inset-bottom));
+  right: 1.1rem;
+  z-index: 60;
+  padding: 0.95rem 1.4rem 0.95rem 1.5rem;
+  background: var(--moss);
+  color: var(--paper);
+  border-radius: 999px;
+  text-decoration: none;
+  font-family: "Instrument Sans", sans-serif;
+  font-size: 0.95rem;
+  font-weight: 500;
+  letter-spacing: 0.005em;
+  display: none;
+  align-items: center;
+  gap: 0.7rem;
+  box-shadow:
+    0 1px 0 rgba(255,255,255,0.08) inset,
+    0 12px 32px -8px rgba(13,26,18,0.5),
+    0 0 0 1px rgba(13,26,18,0.05);
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(28px) scale(0.94);
+  transition: opacity 0.4s var(--ease), transform 0.4s var(--ease);
+}
+
+.fab .pulse-dot {
+  width: 7px; height: 7px;
+  background: var(--leaf-bright);
+  border-radius: 50%;
+  animation: pulse 2.4s infinite;
+}
+
+.fab svg { width: 1rem; height: 1rem; transition: transform 0.25s; }
+.fab:active { transform: translateY(0) scale(0.96); }
+.fab:active svg { transform: translateX(2px); }
+
+.fab.is-visible {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0) scale(1);
+}
+
+@media (max-width: 900px) {
+  .fab { display: inline-flex; }
+}
+</style>
+</head>
+<body>
+
+<a class="fab" href="#book" aria-label="Jump to booking form">
+  <span class="pulse-dot"></span>
+  <span>Book Trial</span>
+  <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <path d="M5 12 H19 M13 6 L19 12 L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>
+</a>
+
+<!-- ═══════════════ TOP BAR ═══════════════ -->
+<div class="review-bar">
+  <a class="review-back" href="index.html">← Back to review</a>
+  <span class="review-tag">Direction A · v1 · stretch concept</span>
+</div>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <a class="brand" href="#">
+      <svg class="brand-mark" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+        <path d="M5 27 C 5 14, 14 5, 27 5 C 27 18, 18 27, 5 27 Z" fill="currentColor" opacity="0.18"/>
+        <path d="M5 27 C 5 14, 14 5, 27 5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" fill="none"/>
+        <path d="M5 27 L27 5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" opacity="0.55"/>
+      </svg>
+      Terra<em>Nexis</em>
+    </a>
+
+    <div class="ticker" aria-label="Live cohort feed">
+      <div class="ticker-track" id="ticker">
+        <!-- populated by JS, duplicated for seamless loop -->
+      </div>
+    </div>
+
+    <div class="topbar-right">
+      <span class="pulse"></span>
+      <span>Live</span>
+    </div>
+  </div>
+</header>
+
+<!-- ═══════════════ HERO ═══════════════ -->
+<section class="hero">
+  <div class="hero-text">
+    <div class="station-tag anim d1">
+      <span>Field Station 04</span>
+      <span class="station-tag-num">Niagara · ON</span>
+    </div>
+
+    <h1 class="headline anim d2">Reserve <em>your</em> field.</h1>
+
+    <p class="hero-sub anim d3">
+      What you see on the right is a <strong>live soil profile</strong> from
+      Niagara-on-the-Lake — sampled this hour, the same way TerraNexis
+      will read your fields. Tell us about your farm, and we'll schedule
+      your free 60-day install.
+    </p>
+
+    <div class="conditions anim d4">
+      <div class="conditions-grid">
+        <div class="condition">
+          <div class="k">Air Temp</div>
+          <div class="v" id="cond-air">—<small>°C</small></div>
+        </div>
+        <div class="condition">
+          <div class="k">Soil Temp · 0cm</div>
+          <div class="v" id="cond-soil-t">—<small>°C</small></div>
+        </div>
+        <div class="condition">
+          <div class="k">Soil Moisture</div>
+          <div class="v" id="cond-soil-m">—<small>%</small></div>
+        </div>
+        <div class="condition">
+          <div class="k">Today's Advice</div>
+          <div class="v" style="font-size: 1.1rem; padding-top: 0.3rem;" id="cond-advice-title">—</div>
+          <div class="advice" id="cond-advice">— Loading</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════ SOIL PROFILE WIDGET ═══════════════ -->
+  <div class="soil-widget anim d5">
+    <div class="soil-widget-head">
+      <strong>NGR-04 · Soil Profile</strong>
+      <span class="live">Live · <span id="reading-time">14:32 EST</span></span>
+    </div>
+
+    <svg class="soil-svg" viewBox="0 0 400 540" aria-label="Live soil cross-section">
+      <defs>
+        <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#E5DDC4"/>
+          <stop offset="1" stop-color="#F2EBD3"/>
+        </linearGradient>
+        <linearGradient id="topsoil" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#3D2817"/>
+          <stop offset="1" stop-color="#52311A"/>
+        </linearGradient>
+        <linearGradient id="loam" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#52311A"/>
+          <stop offset="1" stop-color="#6B4226"/>
+        </linearGradient>
+        <linearGradient id="subsoil" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#6B4226"/>
+          <stop offset="1" stop-color="#85553A"/>
+        </linearGradient>
+        <linearGradient id="clay" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#85553A"/>
+          <stop offset="1" stop-color="#9B6B4F"/>
+        </linearGradient>
+        <pattern id="soilGrain" x="0" y="0" width="6" height="6" patternUnits="userSpaceOnUse">
+          <circle cx="3" cy="3" r="0.5" fill="#000" opacity="0.18"/>
+          <circle cx="1" cy="5" r="0.3" fill="#000" opacity="0.12"/>
+        </pattern>
+      </defs>
+
+      <!-- Sky -->
+      <rect x="0" y="0" width="400" height="180" fill="url(#sky)"/>
+
+      <!-- Sun -->
+      <circle cx="335" cy="50" r="14" fill="#E8C677" opacity="0.45"/>
+      <circle cx="335" cy="50" r="22" fill="#E8C677" opacity="0.15"/>
+
+      <!-- Water droplets -->
+      <g class="rain">
+        <ellipse class="drop d1" cx="100" cy="70" rx="1.2" ry="3.5" fill="#3B6B7E" opacity="0"/>
+        <ellipse class="drop d2" cx="155" cy="40" rx="1.2" ry="3.5" fill="#3B6B7E" opacity="0"/>
+        <ellipse class="drop d3" cx="220" cy="60" rx="1.2" ry="3.5" fill="#3B6B7E" opacity="0"/>
+        <ellipse class="drop d4" cx="290" cy="90" rx="1.2" ry="3.5" fill="#3B6B7E" opacity="0"/>
+        <ellipse class="drop d5" cx="370" cy="50" rx="1.2" ry="3.5" fill="#3B6B7E" opacity="0"/>
+      </g>
+
+      <!-- Plant -->
+      <g class="leaf-shape" transform="translate(200, 0)">
+        <path d="M0 175 V 90" stroke="#5C8A3C" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+        <path d="M0 130 C -22 125 -42 115 -48 95 C -28 105 -8 115 0 130 Z" fill="#5C8A3C" opacity="0.95"/>
+        <path d="M0 110 C 22 107 42 95 50 75 C 30 88 12 100 0 110 Z" fill="#7AB02E"/>
+        <path d="M0 90 C -7 80 -7 65 0 55 C 7 65 7 80 0 90 Z" fill="#5C8A3C"/>
+      </g>
+
+      <!-- Earth strata -->
+      <rect x="0" y="180" width="400" height="80" fill="url(#topsoil)"/>
+      <rect x="0" y="260" width="400" height="100" fill="url(#loam)"/>
+      <rect x="0" y="360" width="400" height="120" fill="url(#subsoil)"/>
+      <rect x="0" y="480" width="400" height="60" fill="url(#clay)"/>
+      <rect x="0" y="180" width="400" height="360" fill="url(#soilGrain)"/>
+
+      <!-- Strata divider lines -->
+      <line x1="0" y1="180" x2="400" y2="180" stroke="#0D1A12" stroke-width="0.5" opacity="0.5"/>
+      <line x1="0" y1="260" x2="400" y2="260" stroke="#000" stroke-width="0.4" opacity="0.3"/>
+      <line x1="0" y1="360" x2="400" y2="360" stroke="#000" stroke-width="0.4" opacity="0.3"/>
+      <line x1="0" y1="480" x2="400" y2="480" stroke="#000" stroke-width="0.4" opacity="0.3"/>
+
+      <!-- Roots -->
+      <g class="roots" transform="translate(200, 180)" stroke="#2B1A0E" stroke-width="1.4" fill="none" stroke-linecap="round" opacity="0.85">
+        <path class="root r1" pathLength="100" stroke-dasharray="100" d="M0 0 C 5 25 -10 45 -15 80 C -20 115 -10 150 -25 195"/>
+        <path class="root r2" pathLength="100" stroke-dasharray="100" d="M0 0 C -8 30 5 60 10 100 C 15 145 5 195 25 240"/>
+        <path class="root r3" pathLength="100" stroke-dasharray="100" d="M0 0 C 0 35 -3 75 -2 115 C 0 165 -8 215 -3 270"/>
+        <path class="root r4" pathLength="100" stroke-dasharray="100" d="M0 0 C 14 22 28 42 32 80 C 36 110 30 130 35 155" opacity="0.7"/>
+        <path class="root r5" pathLength="100" stroke-dasharray="100" d="M0 0 C -14 18 -28 35 -34 70 C -38 100 -32 120 -36 145" opacity="0.7"/>
+      </g>
+
+      <!-- Sensor stake -->
+      <g transform="translate(310, 130)">
+        <!-- Solar panel head -->
+        <rect x="-26" y="-22" width="52" height="32" fill="#1A1A1A" rx="2"/>
+        <rect x="-23" y="-19" width="46" height="26" fill="#2D3A4A" rx="1"/>
+        <line x1="-23" y1="-11" x2="23" y2="-11" stroke="#1A1A1A" stroke-width="0.8"/>
+        <line x1="-23" y1="-3" x2="23" y2="-3" stroke="#1A1A1A" stroke-width="0.8"/>
+        <line x1="0" y1="-19" x2="0" y2="7" stroke="#1A1A1A" stroke-width="0.8"/>
+        <!-- antenna pulse -->
+        <circle cx="20" cy="-19" r="2" fill="#7AB02E">
+          <animate attributeName="opacity" values="1;0.2;1" dur="2.4s" repeatCount="indefinite"/>
+        </circle>
+        <!-- Stake -->
+        <line x1="0" y1="10" x2="0" y2="265" stroke="#3A3A3A" stroke-width="2.5"/>
+        <line x1="0" y1="10" x2="0" y2="265" stroke="#5A5A5A" stroke-width="0.8"/>
+        <!-- Sensor probes -->
+        <circle class="sensor-ring s1" cx="0" cy="55" r="5" fill="rgba(122,176,46,0.15)" stroke="#7AB02E" stroke-width="2"/>
+        <circle class="sensor-ring s2" cx="0" cy="135" r="5" fill="rgba(122,176,46,0.15)" stroke="#7AB02E" stroke-width="2"/>
+        <circle class="sensor-ring s3" cx="0" cy="245" r="5" fill="rgba(122,176,46,0.15)" stroke="#7AB02E" stroke-width="2"/>
+      </g>
+
+      <!-- Readouts -->
+      <g class="readouts" font-family="JetBrains Mono, monospace">
+        <!-- 5cm -->
+        <g transform="translate(20, 195)">
+          <line x1="0" y1="0" x2="280" y2="0" stroke="#3B6B7E" stroke-width="0.6" stroke-dasharray="2,3" opacity="0.6"/>
+          <text x="0" y="-6" fill="#0D1A12" font-size="8.5" letter-spacing="2">DEPTH 5CM</text>
+          <text x="0" y="14" fill="#3B6B7E" font-size="13" font-weight="500" id="r1-moisture">32%</text>
+          <text x="40" y="14" fill="#0D1A12" font-size="11" opacity="0.7" id="r1-temp">18.4°C</text>
+          <text x="0" y="26" fill="#5C8A3C" font-size="8" letter-spacing="1.5" id="r1-status">OPTIMAL</text>
+        </g>
+        <!-- 15cm -->
+        <g transform="translate(20, 275)">
+          <line x1="0" y1="0" x2="280" y2="0" stroke="#7AB02E" stroke-width="0.6" stroke-dasharray="2,3" opacity="0.7"/>
+          <text x="0" y="-6" fill="#F2EBD3" font-size="8.5" letter-spacing="2">DEPTH 15CM · ROOT ZONE</text>
+          <text x="0" y="14" fill="#7AB02E" font-size="13" font-weight="500" id="r2-moisture">28%</text>
+          <text x="40" y="14" fill="#F2EBD3" font-size="11" opacity="0.85" id="r2-temp">17.1°C</text>
+          <text x="0" y="26" fill="#7AB02E" font-size="8" letter-spacing="1.5" id="r2-status">OPTIMAL</text>
+        </g>
+        <!-- 30cm -->
+        <g transform="translate(20, 385)">
+          <line x1="0" y1="0" x2="280" y2="0" stroke="#7AB02E" stroke-width="0.6" stroke-dasharray="2,3" opacity="0.7"/>
+          <text x="0" y="-6" fill="#F2EBD3" font-size="8.5" letter-spacing="2">DEPTH 30CM · DEEP</text>
+          <text x="0" y="14" fill="#7AB02E" font-size="13" font-weight="500" id="r3-moisture">42%</text>
+          <text x="40" y="14" fill="#F2EBD3" font-size="11" opacity="0.85" id="r3-temp">14.8°C</text>
+          <text x="0" y="26" fill="#7AB02E" font-size="8" letter-spacing="1.5" id="r3-status">RESERVE OK</text>
+        </g>
+      </g>
+
+      <!-- Surface labels (left side) -->
+      <g font-family="JetBrains Mono, monospace" font-size="8" letter-spacing="2" fill="#0D1A12" opacity="0.5">
+        <text x="10" y="172">SURFACE · 0CM</text>
+        <text x="10" y="475">SUBSOIL · 60CM</text>
+      </g>
+    </svg>
+
+    <div class="soil-widget-foot">
+      <span>SAMPLE RATE · <strong>15 MIN</strong></span>
+      <span>POWER · <strong>SOLAR · OK</strong></span>
+      <span>UPLINK · <strong>LTE</strong></span>
+    </div>
+  </div>
+</section>
+
+<hr class="divider-rule">
+
+<!-- ═══════════════ COHORT STRIP ═══════════════ -->
+<div class="cohort-strip">
+  <div class="cohort-label">
+    <strong>Spring 2026 cohort.</strong>
+    Limited capacity in the Niagara region.
+  </div>
+  <div class="spots-bar" id="spotsBar">
+    <!-- 12 cells, populated by JS -->
+  </div>
+  <div class="spots-count">
+    <em id="spotsRemaining">3</em> of 12 spots remaining
+  </div>
+</div>
+
+<hr class="divider-rule">
+
+<!-- ═══════════════ COHORT MAP SECTION ═══════════════ -->
+<section class="cohort-section" id="cohort-map">
+
+  <header class="cohort-header">
+    <div>
+      <div class="cohort-eyebrow">Niagara Region · Real Boundaries · Stats Canada</div>
+      <h2 class="cohort-h2">Twelve farms. <em>One peninsula.</em></h2>
+    </div>
+    <p class="cohort-lede">
+      Each green dot is a real farm in our <strong>Spring 2026 cohort.</strong>
+      The pulsing marker is <strong>NGR-04</strong> — the live station feeding
+      the soil readings up top. Three slots remain.
+    </p>
+  </header>
+
+  <div class="cohort-map-wrap">
+
+    <div class="cohort-map">
+      <div class="cohort-map-head">
+        <span><strong>Niagara Region</strong> · 1:300K · UTM 17N</span>
+        <span class="live-tag">NGR-04 · streaming</span>
+      </div>
+
+      <svg class="niagara-svg" viewBox="0 0 867 700" aria-label="Niagara region with active cohort farms">
+        <defs>
+          <pattern id="water-hatch" x="0" y="0" width="9" height="9" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+            <line x1="0" y1="4.5" x2="9" y2="4.5" stroke="#3B6B7E" stroke-width="0.45" opacity="0.4"/>
+          </pattern>
+        </defs>
+
+        <!-- Subtle reference grid (every 100 SVG units ≈ 11.6 km) -->
+        <g stroke="#0D1A12" stroke-width="0.4" opacity="0.06">
+          <line x1="0" y1="100" x2="867" y2="100"/>
+          <line x1="0" y1="200" x2="867" y2="200"/>
+          <line x1="0" y1="300" x2="867" y2="300"/>
+          <line x1="0" y1="400" x2="867" y2="400"/>
+          <line x1="0" y1="500" x2="867" y2="500"/>
+          <line x1="0" y1="600" x2="867" y2="600"/>
+          <line x1="200" y1="0" x2="200" y2="700"/>
+          <line x1="300" y1="0" x2="300" y2="700"/>
+          <line x1="400" y1="0" x2="400" y2="700"/>
+          <line x1="500" y1="0" x2="500" y2="700"/>
+          <line x1="600" y1="0" x2="600" y2="700"/>
+          <line x1="700" y1="0" x2="700" y2="700"/>
+          <line x1="800" y1="0" x2="800" y2="700"/>
+        </g>
+
+        <!-- Lakes -->
+        <g class="lakes">
+          <path class="lake" d="M842.2 22.0L845.3 141.0L747.7 180.7L699.9 190.3L686.2 197.2L619.7 209.9L580.9 240.1L538.8 258.8L511.7 278.8L495.6 275.5L466.0 260.8L431.3 257.8L360.9 263.0L326.6 257.4L257.1 234.2L223.1 215.0L200.2 186.8L198.1 150.7L215.9 118.9L261.0 67.4L280.8 33.8Z"/>
+          <path class="lake" d="M152.7 678.0L152.0 627.7L162.8 627.6L245.1 593.1L297.9 613.4L310.4 609.3L323.6 600.0L342.6 596.9L401.6 599.8L409.4 597.7L426.1 579.6L435.4 576.9L490.9 583.2L607.5 574.0L640.6 579.8L671.4 598.0L684.3 601.1L689.4 588.3L696.7 581.4L774.7 560.9L789.9 551.8L802.1 539.6L809.0 519.7L800.4 506.7L769.4 491.9L734.1 466.2L717.9 447.1L717.3 430.2L724.1 403.5L692.7 372.0L698.9 355.2L727.4 373.5L805.8 381.2L825.4 404.7L822.3 425.9L798.4 452.8L793.0 474.4L796.2 482.8L812.9 500.1L819.2 542.3L843.2 593.1L845.3 623.8L843.5 647.0L836.5 664.7Z"/>
+          <!-- hatch overlay -->
+          <path d="M842.2 22.0L845.3 141.0L747.7 180.7L699.9 190.3L686.2 197.2L619.7 209.9L580.9 240.1L538.8 258.8L511.7 278.8L495.6 275.5L466.0 260.8L431.3 257.8L360.9 263.0L326.6 257.4L257.1 234.2L223.1 215.0L200.2 186.8L198.1 150.7L215.9 118.9L261.0 67.4L280.8 33.8Z" fill="url(#water-hatch)" pointer-events="none"/>
+          <path d="M152.7 678.0L152.0 627.7L162.8 627.6L245.1 593.1L297.9 613.4L310.4 609.3L323.6 600.0L342.6 596.9L401.6 599.8L409.4 597.7L426.1 579.6L435.4 576.9L490.9 583.2L607.5 574.0L640.6 579.8L671.4 598.0L684.3 601.1L689.4 588.3L696.7 581.4L774.7 560.9L789.9 551.8L802.1 539.6L809.0 519.7L800.4 506.7L769.4 491.9L734.1 466.2L717.9 447.1L717.3 430.2L724.1 403.5L692.7 372.0L698.9 355.2L727.4 373.5L805.8 381.2L825.4 404.7L822.3 425.9L798.4 452.8L793.0 474.4L796.2 482.8L812.9 500.1L819.2 542.3L843.2 593.1L845.3 623.8L843.5 647.0L836.5 664.7Z" fill="url(#water-hatch)" pointer-events="none"/>
+        </g>
+
+        <!-- Lake labels -->
+        <text class="lake-label" x="500" y="78" text-anchor="middle">Lake Ontario</text>
+        <text class="lake-label" x="475" y="660" text-anchor="middle">Lake Erie</text>
+
+        <!-- Municipalities -->
+        <g class="munis">
+          <path class="muni is-active" data-muni="Grimsby"            d="M309.2 248.2L309.0 250.3L320.4 259.6L335.0 267.7L349.4 265.8L355.1 267.6L355.8 269.0L356.2 267.7L355.9 271.2L357.1 270.9L356.5 267.7L368.2 275.6L373.7 276.6L383.5 276.3L385.4 336.4L288.3 308.7L306.4 248.4L308.1 247.5L309.2 248.2Z"/>
+          <path class="muni is-active" data-muni="Lincoln"            d="M453.7 272.1L463.8 274.5L481.5 284.4L481.9 283.7L492.9 287.4L505.8 288.4L520.7 284.9L518.5 286.9L519.8 291.7L518.9 293.0L520.8 295.0L519.8 296.7L523.1 302.7L521.8 307.0L522.9 306.6L522.6 309.3L524.2 310.2L522.3 314.1L523.7 318.3L522.3 321.3L523.7 320.8L526.2 324.0L524.7 326.5L525.8 327.3L527.3 357.3L471.3 360.7L471.9 370.0L387.0 375.0L383.5 276.3L392.0 274.9L401.2 276.9L408.3 274.6L417.1 275.9L427.2 272.7L453.7 272.1Z"/>
+          <path class="muni is-active" data-muni="St. Catharines"     d="M591.1 224.6L592.5 226.1L596.9 225.0L593.5 227.4L594.3 232.6L593.0 233.3L593.1 234.9L594.7 237.9L593.1 237.3L593.1 238.8L594.3 238.1L593.1 238.9L593.2 241.1L596.3 242.7L600.7 241.5L602.8 275.9L605.9 285.6L609.6 320.1L619.3 315.1L619.7 324.2L552.5 358.0L552.4 355.9L527.3 357.3L525.8 327.3L524.7 326.5L526.2 324.0L523.7 320.8L522.3 321.3L523.7 318.3L522.3 314.1L524.2 310.2L522.6 309.3L522.9 306.6L521.8 306.8L523.1 302.7L519.8 296.7L520.8 295.2L519.0 293.2L519.8 291.7L518.6 286.5L528.4 280.7L538.1 272.9L558.0 263.4L557.6 258.4L558.1 264.0L556.8 269.3L557.4 268.5L557.9 269.3L559.0 265.8L558.2 257.7L559.0 262.1L564.2 261.5L582.7 248.7L587.8 242.9L588.4 226.5L589.7 224.7L591.1 224.6Z"/>
+          <path class="muni is-active" data-muni="Niagara-on-the-Lake" d="M682.1 205.9L688.5 206.0L693.3 209.6L697.8 210.9L698.9 212.2L697.5 211.7L698.0 213.3L699.0 212.5L701.0 215.1L700.4 231.3L702.7 242.0L700.7 255.1L701.8 258.8L706.1 263.4L706.7 266.2L703.1 279.3L704.4 285.2L703.8 291.7L707.2 298.0L710.7 301.4L714.0 314.9L634.4 319.5L634.2 316.8L619.7 324.2L619.3 315.1L609.6 320.1L605.9 285.6L602.8 275.9L600.7 241.5L610.6 237.5L648.1 211.6L652.6 210.1L654.1 211.7L661.2 212.1L682.1 205.9Z"/>
+          <path class="muni"           data-muni="Niagara Falls"      d="M714.0 316.0L713.4 323.2L709.1 327.0L706.2 333.2L704.1 335.0L702.4 334.5L697.4 340.1L695.1 339.1L693.6 340.1L694.5 342.3L702.6 348.0L704.2 353.9L698.3 369.3L692.4 376.7L690.5 385.2L695.9 389.5L694.6 392.2L695.6 393.2L696.1 389.4L698.6 390.3L696.3 393.1L699.7 390.2L704.6 390.3L714.2 395.3L716.5 397.9L725.4 399.3L734.1 412.6L734.3 422.4L726.7 435.1L725.6 439.3L728.6 459.9L728.4 466.1L731.1 473.1L728.2 473.2L728.1 487.7L662.3 489.3L662.4 493.2L667.6 493.1L667.6 496.6L631.1 497.4L631.0 494.7L629.9 494.8L628.3 455.6L627.9 402.3L623.5 402.3L620.1 324.0L634.2 316.8L634.4 319.5L677.2 316.4L714.0 314.9L714.0 316.0Z"/>
+          <path class="muni"           data-muni="Niagara Falls"      d="M734.9 396.6L740.0 397.6L743.0 400.4L743.5 404.8L739.9 409.4L730.5 397.7L734.9 396.6Z"/>
+          <path class="muni"           data-muni="Thorold"            d="M622.1 354.6L623.5 402.3L627.9 402.3L628.3 418.9L624.0 418.1L620.4 422.9L617.3 424.6L605.5 420.2L604.5 421.8L604.0 429.7L602.7 431.7L594.5 432.1L591.1 433.9L575.1 434.1L575.0 429.7L571.5 429.8L571.5 434.2L559.1 434.6L558.3 408.2L554.5 410.1L551.1 410.1L545.6 404.3L543.6 356.3L552.4 355.9L552.5 358.0L620.1 324.0L622.1 354.6Z"/>
+          <path class="muni"           data-muni="Welland"            d="M625.7 418.0L628.0 418.8L628.3 455.6L629.9 494.8L631.0 494.7L631.1 497.4L587.1 498.9L578.8 533.6L574.4 513.2L550.9 513.7L550.2 487.1L544.0 492.6L543.0 443.8L550.3 443.7L550.0 434.6L552.0 433.7L553.7 433.7L553.8 434.7L571.5 434.2L571.5 429.8L575.0 429.7L575.1 434.1L591.1 433.9L594.5 432.1L602.7 431.7L604.0 429.7L605.4 420.3L607.8 420.3L617.3 424.6L620.4 422.9L623.9 418.1L625.7 418.0Z"/>
+          <path class="muni"           data-muni="Pelham"             d="M544.1 368.1L545.6 404.3L551.1 410.1L554.5 410.1L558.3 408.2L559.1 434.6L553.8 434.7L553.7 433.7L550.0 434.6L550.3 443.7L543.0 443.8L544.0 492.6L540.9 493.2L528.1 487.4L519.1 489.5L513.3 485.2L509.2 484.2L507.5 484.9L506.8 489.5L505.3 491.1L495.1 492.2L490.6 484.9L481.2 482.2L479.5 475.9L476.3 475.1L471.3 360.7L543.6 356.3L544.1 368.1Z"/>
+          <path class="muni"           data-muni="West Lincoln"       d="M353.4 327.1L385.4 336.4L387.0 375.0L472.1 370.0L476.3 475.1L471.5 476.2L470.7 472.6L468.4 470.1L463.9 473.3L462.0 473.2L460.6 469.3L456.1 467.9L456.7 461.3L455.5 459.3L453.7 459.7L451.5 463.3L446.0 464.2L445.5 458.3L442.5 455.3L439.8 460.0L435.4 461.9L430.6 453.0L428.4 451.7L426.5 453.0L427.5 456.4L420.9 463.6L415.1 463.8L413.6 460.5L408.8 458.5L408.8 463.0L404.2 465.2L402.3 462.8L397.3 461.9L396.3 468.1L391.3 469.2L387.7 466.7L386.0 463.0L380.5 469.2L377.6 469.3L377.8 476.0L376.1 476.8L373.9 473.9L369.7 475.8L369.0 479.2L363.1 478.2L361.7 476.0L358.1 477.4L354.7 475.2L352.3 475.1L349.4 467.3L347.0 464.8L345.4 465.4L346.3 467.5L344.6 471.2L341.9 470.6L339.7 471.5L337.7 462.8L337.3 474.0L216.6 417.8L246.1 316.5L282.5 327.2L288.3 308.7L353.4 327.1Z"/>
+          <path class="muni"           data-muni="Wainfleet"          d="M435.9 462.0L440.9 459.0L442.5 455.3L445.5 458.3L446.0 464.2L451.5 463.3L453.7 459.7L455.5 459.3L456.7 461.3L456.1 467.9L460.6 469.3L462.0 473.2L463.9 473.3L468.4 470.1L470.5 472.1L471.8 476.4L478.7 475.1L481.2 482.2L490.6 484.9L494.1 491.5L495.7 492.4L505.3 491.1L506.8 489.5L507.5 484.9L508.9 484.2L513.3 485.2L517.8 489.2L528.1 487.4L541.9 493.4L550.2 487.1L553.1 583.1L550.3 583.2L545.4 579.6L537.3 577.1L531.0 581.4L528.1 582.0L526.9 580.8L522.7 580.7L517.9 581.8L514.5 584.0L514.4 587.2L507.2 599.8L502.0 593.9L492.8 589.2L488.1 589.2L484.2 593.9L481.8 595.1L473.7 587.8L465.1 584.1L457.0 583.6L454.3 584.5L452.9 586.3L442.3 581.5L388.5 497.3L337.3 474.0L337.0 462.8L338.6 463.4L338.2 468.3L339.7 471.5L341.9 470.6L344.6 471.2L346.3 467.5L345.4 465.4L347.0 464.8L349.4 467.3L352.3 475.1L354.7 475.2L358.1 477.4L361.7 476.0L363.0 478.2L368.6 479.3L369.9 478.5L369.7 475.8L373.9 473.9L376.1 476.8L377.8 476.0L377.6 469.3L380.5 469.2L386.0 463.0L387.7 466.7L391.3 469.2L396.3 468.1L397.3 461.9L402.3 462.8L404.2 465.2L408.8 463.0L408.8 458.5L413.6 460.5L415.1 463.8L420.9 463.6L427.5 456.4L426.5 453.8L427.2 452.0L430.6 453.0L435.9 462.0Z"/>
+          <path class="muni"           data-muni="Port Colborne"      d="M668.2 532.8L669.0 592.6L662.3 588.6L652.8 588.1L653.0 586.7L644.6 580.5L640.5 578.2L634.2 577.3L632.5 577.5L630.3 580.3L624.0 579.9L620.6 584.2L614.5 585.6L612.4 585.5L607.7 582.5L601.5 582.2L597.9 583.4L596.8 586.8L589.5 580.6L584.5 578.8L580.7 579.1L577.9 576.0L580.1 577.8L579.3 577.8L579.2 579.9L580.6 579.1L579.1 580.7L579.7 585.4L577.6 582.9L577.5 586.1L580.0 585.5L574.1 587.8L573.1 580.8L571.7 582.1L572.9 578.0L570.9 577.9L571.9 576.9L571.4 575.5L571.3 577.1L569.1 576.7L568.9 577.6L567.3 576.2L560.1 577.2L558.1 581.6L558.4 583.7L557.0 584.7L553.1 583.1L550.9 513.7L574.4 513.2L578.8 533.6L587.1 498.9L667.6 496.6L668.2 532.8Z"/>
+          <path class="muni"           data-muni="Fort Erie"          d="M731.8 474.6L742.8 482.1L761.1 486.9L764.1 490.0L764.8 496.4L770.9 502.6L782.9 504.8L791.1 503.3L795.7 504.9L807.2 515.5L810.2 520.2L812.0 531.5L814.5 537.7L814.0 543.2L809.3 546.8L803.5 561.2L798.4 565.8L797.3 565.3L794.3 567.3L788.5 567.3L784.9 570.0L779.0 566.6L775.8 566.1L771.2 568.6L771.1 571.7L766.4 570.1L763.1 571.8L757.0 571.5L751.6 574.1L751.0 577.2L749.0 578.9L750.0 580.8L748.4 579.4L746.8 582.4L745.0 582.9L739.7 581.4L733.6 577.8L726.0 577.1L717.5 582.6L717.2 584.9L710.0 592.0L706.4 589.7L705.6 591.4L706.3 589.5L703.4 588.6L690.6 590.5L687.3 593.0L689.0 594.9L687.2 593.1L684.8 595.7L684.9 602.9L685.7 603.8L687.8 602.8L683.5 606.1L684.2 606.6L686.8 604.3L689.5 607.9L684.3 615.1L682.4 613.6L681.9 608.8L680.0 605.4L669.0 592.6L667.6 493.1L662.4 493.2L662.3 489.3L728.1 487.7L728.2 473.2L731.1 473.1L731.8 474.6Z"/>
+        </g>
+
+        <!-- City markers -->
+        <g class="cities">
+          <g class="city city-major" transform="translate(570.9, 307.0)">
+            <circle class="city-dot"/>
+            <text class="city-label" x="9" y="4">St. Catharines</text>
+          </g>
+          <g class="city city-major" transform="translate(699.0, 355.5)">
+            <circle class="city-dot"/>
+            <text class="city-label" x="9" y="4">Niagara Falls</text>
+          </g>
+          <g class="city city-major" transform="translate(573.2, 467.0)">
+            <circle class="city-dot"/>
+            <text class="city-label" x="9" y="4">Welland</text>
+          </g>
+          <g class="city city-major" transform="translate(800.3, 546.1)">
+            <circle class="city-dot"/>
+            <text class="city-label" x="-9" y="4" text-anchor="end">Fort Erie</text>
+          </g>
+          <g class="city city-minor" transform="translate(573.0, 568.4)">
+            <circle class="city-dot"/>
+            <text class="city-label" x="9" y="4">Port Colborne</text>
+          </g>
+          <g class="city city-minor" transform="translate(350.3, 272.8)">
+            <circle class="city-dot"/>
+            <text class="city-label" x="-9" y="4" text-anchor="end">Grimsby</text>
+          </g>
+          <g class="city city-minor" transform="translate(465.6, 313.4)">
+            <circle class="city-dot"/>
+            <text class="city-label" x="9" y="14">Vineland</text>
+          </g>
+          <g class="city city-minor" transform="translate(407.0, 298.4)">
+            <circle class="city-dot"/>
+            <text class="city-label" x="-9" y="-7" text-anchor="end">Beamsville</text>
+          </g>
+        </g>
+
+        <!-- Active farm dots -->
+        <g class="active-farms">
+          <circle class="farm-dot" cx="641.1" cy="247.4" r="8" data-link="active-0"/>
+          <circle class="farm-dot" cx="553.0" cy="259.8" r="8" data-link="active-1"/>
+          <circle class="farm-dot" cx="494.6" cy="286.9" r="8" data-link="active-2"/>
+          <circle class="farm-dot" cx="429.5" cy="294.9" r="8" data-link="active-3"/>
+          <circle class="farm-dot" cx="368.7" cy="271.0" r="8" data-link="active-4"/>
+          <circle class="farm-dot" cx="665.0" cy="221.0" r="8" data-link="active-5"/>
+          <circle class="farm-dot" cx="599.5" cy="270.4" r="8" data-link="active-6"/>
+          <circle class="farm-dot" cx="463.0" cy="284.6" r="8" data-link="active-7"/>
+          <circle class="farm-dot" cx="675.8" cy="229.4" r="8" data-link="active-8"/>
+        </g>
+
+        <!-- Open spots -->
+        <g class="open-farms">
+          <circle class="open-spot" cx="616.7" cy="252.7" r="11" data-link="open-0"/>
+          <circle class="open-spot" cx="540.6" cy="305.2" r="11" data-link="open-1"/>
+          <circle class="open-spot" cx="577.1" cy="373.5" r="11" data-link="open-2"/>
+        </g>
+
+        <!-- NGR-04 live beacon -->
+        <g class="ngr04-beacon" data-link="ngr04" transform="translate(691.8, 212.0)">
+          <circle class="beacon-pulse" r="13"/>
+          <circle class="beacon-pulse beacon-pulse-2" r="13"/>
+          <line class="beacon-line" x1="0" y1="-9" x2="0" y2="-46"/>
+          <text class="beacon-label" x="0" y="-52" text-anchor="middle">NGR-04 · LIVE</text>
+          <text class="beacon-label" x="0" y="-37" text-anchor="middle" style="font-size:10px;letter-spacing:0.14em;fill:var(--ink-soft);font-weight:400;">NIAGARA-ON-THE-LAKE</text>
+          <circle class="beacon-core" r="7"/>
+        </g>
+
+        <!-- Compass rose (left gutter) -->
+        <g transform="translate(70, 105)" opacity="0.7">
+          <circle r="22" fill="none" stroke="#0D1A12" stroke-width="0.7"/>
+          <line x1="-22" y1="0" x2="22" y2="0" stroke="#0D1A12" stroke-width="0.4" opacity="0.5"/>
+          <line x1="0" y1="-22" x2="0" y2="22" stroke="#0D1A12" stroke-width="0.4" opacity="0.5"/>
+          <polygon points="-4,-2 0,-22 4,-2 0,3" fill="#0D1A12"/>
+          <polygon points="-3,4 0,22 3,4" fill="none" stroke="#0D1A12" stroke-width="0.6"/>
+          <text class="compass-text" x="0" y="-30" text-anchor="middle">N</text>
+        </g>
+
+        <!-- Map title in upper-left gutter -->
+        <g class="map-stat-block" transform="translate(20, 200)">
+          <text x="0" y="0" font-family="Fraunces, serif" font-size="20" font-style="italic" font-weight="400" letter-spacing="-0.01em" fill="#0D1A12" style="font-variation-settings: 'opsz' 60, 'SOFT' 100;">Niagara</text>
+          <text x="0" y="22" font-family="Fraunces, serif" font-size="20" font-style="italic" font-weight="400" letter-spacing="-0.01em" fill="#0D1A12" style="font-variation-settings: 'opsz' 60, 'SOFT' 100;">Region</text>
+          <line x1="0" y1="32" x2="60" y2="32" stroke="#5C8A3C" stroke-width="1.2"/>
+          <text x="0" y="48" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.16em" fill="#3A463E" font-weight="500">REGIONAL</text>
+          <text x="0" y="62" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.16em" fill="#3A463E" font-weight="500">MUNICIPALITY</text>
+          <text x="0" y="86" font-family="JetBrains Mono, monospace" font-size="8" letter-spacing="0.14em" fill="#3A463E" opacity="0.65">12 LOCAL MUNI.</text>
+          <text x="0" y="98" font-family="JetBrains Mono, monospace" font-size="8" letter-spacing="0.14em" fill="#3A463E" opacity="0.65">~1,896 KM²</text>
+          <text x="0" y="110" font-family="JetBrains Mono, monospace" font-size="8" letter-spacing="0.14em" fill="#3A463E" opacity="0.65">POP · 477,941</text>
+        </g>
+
+        <!-- Scale bar (10km · 86.3 SVG units) -->
+        <g transform="translate(50, 660)">
+          <line class="scale-bar" x1="0"    y1="0"  x2="86.3" y2="0"/>
+          <line class="scale-bar" x1="0"    y1="-4" x2="0"    y2="4"/>
+          <line class="scale-bar" x1="43.2" y1="-2" x2="43.2" y2="2"/>
+          <line class="scale-bar" x1="86.3" y1="-4" x2="86.3" y2="4"/>
+          <text class="scale-text" x="0"    y="16">0</text>
+          <text class="scale-text" x="43.2" y="16" text-anchor="middle">5 KM</text>
+          <text class="scale-text" x="86.3" y="16" text-anchor="end">10 KM</text>
+        </g>
+
+        <!-- Source attribution -->
+        <text x="857" y="690" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="7.5" letter-spacing="0.14em" fill="#3A463E" opacity="0.45">SRC · NIAGARA OPEN DATA · NATURAL EARTH 1:10M · UTM 17N</text>
+      </svg>
+
+      <div class="cohort-map-foot">
+        <span><strong>9 active</strong> · 3 open · 1 live</span>
+        <div class="legend">
+          <span><span class="swatch sw-active"></span>Active farm</span>
+          <span><span class="swatch sw-open"></span>Open slot</span>
+          <span><span class="swatch sw-live"></span>Live station</span>
+        </div>
+      </div>
+    </div>
+
+    <aside class="cohort-stations">
+      <div class="cohort-stations-head">
+        <strong>Active Stations</strong>
+        <span>Cohort 04 · Spring '26</span>
+      </div>
+
+      <ol class="stations-list">
+        <li class="station-row" data-link="ngr04">
+          <span class="sid">NGR-04</span>
+          <div class="sname">Niagara-on-the-Lake</div>
+          <span class="srt live">live</span>
+        </li>
+        <li class="station-row" data-link="active-5">
+          <span class="sid">NGR-06</span>
+          <div class="sname">NOTL · East</div>
+          <span class="srt">33% · ok</span>
+        </li>
+        <li class="station-row" data-link="active-8">
+          <span class="sid">NGR-08</span>
+          <div class="sname">NOTL · Concession 4</div>
+          <span class="srt">31% · ok</span>
+        </li>
+        <li class="station-row" data-link="active-0">
+          <span class="sid">NGR-11</span>
+          <div class="sname">Virgil</div>
+          <span class="srt warn">22% · water</span>
+        </li>
+        <li class="station-row" data-link="active-6">
+          <span class="sid">NGR-13</span>
+          <div class="sname">St. Catharines</div>
+          <span class="srt">28% · ok</span>
+        </li>
+        <li class="station-row" data-link="active-1">
+          <span class="sid">NGR-15</span>
+          <div class="sname">Vineland East</div>
+          <span class="srt">29% · ok</span>
+        </li>
+        <li class="station-row" data-link="active-7">
+          <span class="sid">NGR-17</span>
+          <div class="sname">Vineland West</div>
+          <span class="srt">26% · watch</span>
+        </li>
+        <li class="station-row" data-link="active-2">
+          <span class="sid">NGR-19</span>
+          <div class="sname">Jordan Station</div>
+          <span class="srt">31% · ok</span>
+        </li>
+        <li class="station-row" data-link="active-3">
+          <span class="sid">NGR-22</span>
+          <div class="sname">Beamsville</div>
+          <span class="srt">30% · ok</span>
+        </li>
+        <li class="station-row" data-link="active-4">
+          <span class="sid">NGR-24</span>
+          <div class="sname">Grimsby</div>
+          <span class="srt">34% · ok</span>
+        </li>
+        <li class="station-row is-open" data-link="open-0">
+          <span class="sid">— —</span>
+          <div class="sname">Open · NOTL South</div>
+          <span class="srt">apply</span>
+        </li>
+        <li class="station-row is-open" data-link="open-1">
+          <span class="sid">— —</span>
+          <div class="sname">Open · St. Catharines</div>
+          <span class="srt">apply</span>
+        </li>
+        <li class="station-row is-open" data-link="open-2">
+          <span class="sid">— —</span>
+          <div class="sname">Open · Niagara Falls</div>
+          <span class="srt">apply</span>
+        </li>
+      </ol>
+
+      <div class="cohort-stations-foot">
+        <span>Cohort · <strong>9 / 12</strong></span>
+        <span>Spring 2026</span>
+      </div>
+    </aside>
+
+  </div>
+</section>
+
+<hr class="divider-rule">
+
+<!-- ═══════════════ FORM SECTION ═══════════════ -->
+<section class="form-wrap">
+
+  <!-- Form card -->
+  <div class="form-card" id="book" style="scroll-margin-top: 80px;">
+    <div class="form-header">
+      <span class="file-tag">FORM · TX-001</span>
+      <span class="doc-id">DOC <strong id="docId">—</strong></span>
+      <span class="save-state" id="saveState">Local · Saved</span>
+    </div>
+
+    <div class="form-body">
+      <!-- Step rail -->
+      <div class="steps-rail">
+        <button class="step-pill is-active" data-go="1" type="button">
+          <span class="step-num">01 · 0CM</span>
+          <span class="step-name">Identity</span>
+        </button>
+        <button class="step-pill" data-go="2" type="button">
+          <span class="step-num">02 · 5CM</span>
+          <span class="step-name">Location</span>
+        </button>
+        <button class="step-pill" data-go="3" type="button">
+          <span class="step-num">03 · 15CM</span>
+          <span class="step-name">Contact</span>
+        </button>
+        <button class="step-pill" data-go="4" type="button">
+          <span class="step-num">04 · 30CM</span>
+          <span class="step-name">Review</span>
+        </button>
+      </div>
+
+      <form class="step-form" id="booking" novalidate>
+
+        <!-- STEP 1 — Identity -->
+        <div class="step-panel is-active" data-step="1">
+          <div class="step-eyebrow">
+            <span class="depth-badge">SURFACE · 0CM</span>
+            Tell us who's farming
+          </div>
+          <h2 class="step-title">First, who are <em>you?</em></h2>
+          <p class="step-help">We use your name to schedule install and route your dashboard. Just the basics for now.</p>
+
+          <div class="field">
+            <input type="text" id="name" name="name" placeholder=" " autocomplete="name" required>
+            <label for="name">Your full name</label>
+          </div>
+
+          <div class="field">
+            <input type="text" id="farmName" name="farmName" placeholder=" " required>
+            <label for="farmName">Farm name</label>
+          </div>
+
+          <div class="step-nav" style="justify-content: flex-end;">
+            <button type="button" class="btn btn-primary" data-next="2">
+              Continue · location
+              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M5 12 H19 M13 6 L19 12 L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- STEP 2 — Location -->
+        <div class="step-panel" data-step="2">
+          <div class="step-eyebrow">
+            <span class="depth-badge">TOPSOIL · 5CM</span>
+            Where the sensors will live
+          </div>
+          <h2 class="step-title">Where's <em>the field?</em></h2>
+          <p class="step-help">Brian will drive out on install day. The more specific, the better — gate codes welcome in the notes later.</p>
+
+          <div class="field">
+            <textarea id="address" name="address" placeholder=" " rows="2" autocomplete="street-address" required></textarea>
+            <label for="address">Farm address</label>
+          </div>
+
+          <div class="field-row">
+            <div class="field">
+              <input type="text" id="acres" name="acres" placeholder=" " inputmode="decimal">
+              <label for="acres">Acres <span class="opt">approx.</span></label>
+            </div>
+            <div class="field">
+              <input type="text" id="crop" name="crop" placeholder=" ">
+              <label for="crop">What you grow</label>
+            </div>
+          </div>
+
+          <div class="step-nav">
+            <button type="button" class="btn btn-ghost" data-next="1">
+              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M19 12 H5 M11 18 L5 12 L11 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              Back
+            </button>
+            <button type="button" class="btn btn-primary" data-next="3">
+              Continue · contact
+              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M5 12 H19 M13 6 L19 12 L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- STEP 3 — Contact -->
+        <div class="step-panel" data-step="3">
+          <div class="step-eyebrow">
+            <span class="depth-badge">ROOT ZONE · 15CM</span>
+            How we reach you
+          </div>
+          <h2 class="step-title">How should we <em>follow up?</em></h2>
+          <p class="step-help">Text is fastest. We answer 7 days a week — usually Brian, sometimes Maria, always within 24 hours.</p>
+
+          <div class="field-row">
+            <div class="field">
+              <input type="tel" id="phone" name="phone" placeholder=" " autocomplete="tel" required>
+              <label for="phone">Phone</label>
+            </div>
+            <div class="field">
+              <input type="email" id="email" name="email" placeholder=" " autocomplete="email" required>
+              <label for="email">Email</label>
+            </div>
+          </div>
+
+          <div class="field">
+            <input type="text" id="salesRep" name="salesRep" placeholder=" " autocomplete="off">
+            <label for="salesRep">Sales rep <span class="opt">if a name was given to you</span></label>
+          </div>
+
+          <div class="step-nav">
+            <button type="button" class="btn btn-ghost" data-next="2">
+              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M19 12 H5 M11 18 L5 12 L11 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              Back
+            </button>
+            <button type="button" class="btn btn-primary" data-next="4">
+              Continue · review
+              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M5 12 H19 M13 6 L19 12 L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- STEP 4 — Review -->
+        <div class="step-panel" data-step="4">
+          <div class="step-eyebrow">
+            <span class="depth-badge">DEEP · 30CM</span>
+            Final check
+          </div>
+          <h2 class="step-title">Look it over, <em>send it in.</em></h2>
+          <p class="step-help">We'll open your mail app with this filled in, addressed to <strong>info@terranexis.ca</strong>. Hit send and you're booked.</p>
+
+          <div class="review-grid" id="reviewGrid">
+            <div class="review-row"><div class="k">Name</div>           <div class="v" data-r="name">—</div></div>
+            <div class="review-row"><div class="k">Farm</div>           <div class="v" data-r="farmName">—</div></div>
+            <div class="review-row"><div class="k">Address</div>        <div class="v" data-r="address">—</div></div>
+            <div class="review-row"><div class="k">Acres / Crop</div>   <div class="v" data-r="acresCrop">—</div></div>
+            <div class="review-row"><div class="k">Phone</div>          <div class="v" data-r="phone">—</div></div>
+            <div class="review-row"><div class="k">Email</div>          <div class="v" data-r="email">—</div></div>
+            <div class="review-row"><div class="k">Sales rep</div>      <div class="v" data-r="salesRep">—</div></div>
+            <div class="review-row"><div class="k">Submission</div>     <div class="v" data-r="stamp">—</div></div>
+          </div>
+
+          <div class="field">
+            <textarea id="notes" name="notes" placeholder=" " rows="3"></textarea>
+            <label for="notes">Notes for Brian <span class="opt">gate codes, dogs, best access — optional</span></label>
+          </div>
+
+          <div class="step-nav">
+            <button type="button" class="btn btn-ghost" data-next="3">
+              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M19 12 H5 M11 18 L5 12 L11 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              Back
+            </button>
+            <button type="submit" class="btn btn-primary">
+              Send my request
+              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M5 12 H19 M13 6 L19 12 L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+      </form>
+
+      <!-- Success state -->
+      <div class="success" aria-live="polite">
+        <div class="success-mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none">
+            <path d="M5 12 L10 17 L19 7" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <h3>Request <em>opened.</em><br>Hit send to lock it in.</h3>
+        <p id="successDetail">Your mail app should now be open with a pre-filled message to info@terranexis.ca. Send it to complete your booking.</p>
+        <p>Brian or Maria will follow up within 24 hours to confirm install.</p>
+        <div class="success-fallback">
+          <strong>Mail didn't open?</strong> Email <a href="mailto:info@terranexis.ca">info@terranexis.ca</a> directly, or text Brian at <a href="sms:+16473934289">647-393-4289</a>.
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+
+    <!-- Trial preview -->
+    <div class="preview">
+      <div class="preview-head">
+        <span class="label">Your trial · live preview</span>
+        <span class="stamp" id="previewStamp">Spring 2026</span>
+      </div>
+      <div class="preview-farm" id="previewFarm">
+        <span class="placeholder">your farm</span>
+      </div>
+      <div class="preview-name" id="previewName">— · NIAGARA REGION</div>
+
+      <div class="preview-meta">
+        <div>
+          <div class="k">Acres covered</div>
+          <div class="v" id="previewAcres">— <small>ac</small></div>
+        </div>
+        <div>
+          <div class="k">Suggested sensors</div>
+          <div class="v" id="previewSensors">2 <small>nodes</small></div>
+        </div>
+        <div>
+          <div class="k">Data points / day</div>
+          <div class="v" id="previewPoints">192</div>
+        </div>
+        <div>
+          <div class="k">Trial through</div>
+          <div class="v" id="previewThrough" style="font-size: 1.1rem;">—</div>
+        </div>
+      </div>
+
+      <ul class="preview-includes">
+        <li><span>Sensor install on-site, by Brian</span><span class="pill">Day 0</span></li>
+        <li><span>Mobile dashboard, real-time alerts</span><span class="pill">Day 1+</span></li>
+        <li><span>Direct line to founders, 7 days a week</span><span class="pill">Always</span></li>
+        <li><span>Cancel anytime — no commitment</span><span class="pill">$0 today</span></li>
+      </ul>
+    </div>
+
+
+  </aside>
+</section>
+
+<!-- ═══════════════ FOUNDERS ═══════════════ -->
+<section class="founders">
+  <div class="founders-inner">
+    <div>
+      <div class="founders-eyebrow">The Founders</div>
+      <h2>Brian &amp; Maria built this for <em>your</em> farm.</h2>
+    </div>
+    <div class="founders-text">
+      <p>
+        TerraNexis began on Ontario soil, with one belief: that farmers shouldn't have to guess.
+        We design our sensors for the realities of Canadian fields — rugged, solar, simple to install,
+        and built to feed back the kind of data that actually changes how a season ends.
+      </p>
+      <p>
+        When you book a trial, you're not getting a sales pitch. You're getting Brian out
+        in your field with a shovel, dropping a sensor next to your crop, walking the rows with you.
+      </p>
+      <div class="founders-sig">
+        Local. Trusted. Committed to your success.
+        <small>— Brian &amp; Maria · Niagara, Ontario</small>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ FOOTER ═══════════════ -->
+<footer>
+  <div class="footer-inner">
+    <div>
+      <div class="footer-mark">
+        <svg width="22" height="22" viewBox="0 0 32 32" fill="none" aria-hidden="true" style="color: var(--moss);">
+          <path d="M5 27 C 5 14, 14 5, 27 5 C 27 18, 18 27, 5 27 Z" fill="currentColor" opacity="0.18"/>
+          <path d="M5 27 C 5 14, 14 5, 27 5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" fill="none"/>
+          <path d="M5 27 L27 5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" opacity="0.55"/>
+        </svg>
+        Terra<em>Nexis</em>
+      </div>
+      <div class="footer-tag">Smart Ag · Proudly Canadian · Built for Ontario Farms</div>
+    </div>
+    <div class="footer-contact">
+      <div>
+        <span class="k">Email</span>
+        <a href="mailto:info@terranexis.ca">info@terranexis.ca</a>
+      </div>
+      <div>
+        <span class="k">Phone · Text</span>
+        <a href="sms:+16473934289">647-393-4289</a>
+      </div>
+      <div>
+        <span class="k">Web</span>
+        <a href="https://terranexis.ca">terranexis.ca</a>
+      </div>
+    </div>
+  </div>
+  <div class="footer-inner coords">
+    <span>Sta. NGR-04 · 43.255°N · 79.072°W</span>
+    <span>Cohort: Spring 2026 · 11 / 12</span>
+    <span>v 2.04 · field-instrument</span>
+  </div>
+</footer>
+
+<script>
+/* ═══════════════════════════════════════════════════════════════
+   TerraNexis · Field Instrument · runtime
+   ─────────────────────────────────────────────────────────────── */
+(function () {
+
+  /* ─────── Custom cursor ─────── */
+  if (matchMedia('(hover: hover) and (pointer: fine)').matches) {
+    const cursor = document.createElement('div');
+    cursor.className = 'cursor';
+    document.body.appendChild(cursor);
+
+    let cx = -100, cy = -100, tx = -100, ty = -100;
+    addEventListener('mousemove', (e) => { tx = e.clientX; ty = e.clientY; });
+    addEventListener('mousedown', () => cursor.classList.add('is-pressing'));
+    addEventListener('mouseup',   () => cursor.classList.remove('is-pressing'));
+
+    document.querySelectorAll('a, button, input, textarea, label, .step-pill, .farm-dot').forEach(el => {
+      el.addEventListener('mouseenter', () => cursor.classList.add('is-over-link'));
+      el.addEventListener('mouseleave', () => cursor.classList.remove('is-over-link'));
+    });
+
+    function tick() {
+      cx += (tx - cx) * 0.22;
+      cy += (ty - cy) * 0.22;
+      cursor.style.left = cx + 'px';
+      cursor.style.top  = cy + 'px';
+      requestAnimationFrame(tick);
+    }
+    tick();
+  }
+
+  /* ─────── Live ticker ─────── */
+  const stations = [
+    { id: 'NGR-04', name: 'Niagara-on-the-Lake', moisture: 32, temp: 18.4, status: 'OK',            type: 'ok'   },
+    { id: 'NGR-07', name: 'Vineland',            moisture: 22, temp: 19.1, status: 'WATER ADVISED', type: 'warn' },
+    { id: 'NGR-11', name: 'Beamsville',          moisture: 41, temp: 16.8, status: 'OPTIMAL',       type: 'ok'   },
+    { id: 'BRT-02', name: 'Brantford',           moisture: 38, temp: 17.5, status: 'RAIN INCOMING · HOLD IRRIG.', type: 'info' },
+    { id: 'NGR-09', name: 'Jordan Station',      moisture: 29, temp: 18.0, status: 'OK',            type: 'ok'   },
+    { id: 'WLD-03', name: 'Welland',             moisture: 19, temp: 19.6, status: 'WATER ADVISED', type: 'warn' },
+  ];
+
+  const ticker = document.getElementById('ticker');
+  const tickerHTML = (s) => {
+    const statusClass = s.type === 'warn' ? 'status-warn' : s.type === 'info' ? 'status-info' : 'status-ok';
+    return `<span class="ticker-item">
+      <span class="dot ${s.type}"></span>
+      <span class="station">${s.id}</span>
+      <span>·</span>
+      <span class="val">${s.moisture}%</span>
+      <span>·</span>
+      <span class="val">${s.temp}°C</span>
+      <span>·</span>
+      <span class="${statusClass}">${s.status}</span>
+    </span>
+    <span class="ticker-sep">/</span>`;
+  };
+  // duplicate for seamless loop
+  ticker.innerHTML = stations.map(tickerHTML).join('') + stations.map(tickerHTML).join('');
+
+  /* ─────── Spots bar ─────── */
+  const spotsBar = document.getElementById('spotsBar');
+  const TOTAL_SPOTS = 12;
+  const TAKEN = 9;
+  for (let i = 0; i < TOTAL_SPOTS; i++) {
+    const cell = document.createElement('span');
+    cell.className = 'spot ' + (i < TAKEN ? 'taken' : (i === TOTAL_SPOTS - 1 ? 'open' : 'open'));
+    spotsBar.appendChild(cell);
+  }
+  document.getElementById('spotsRemaining').textContent = TOTAL_SPOTS - TAKEN;
+
+  /* ─────── Live weather (Open-Meteo) ─────── */
+  const niagara = { lat: 43.255, lon: -79.072 };
+
+  async function fetchWeather() {
+    try {
+      const url = 'https://api.open-meteo.com/v1/forecast'
+        + `?latitude=${niagara.lat}&longitude=${niagara.lon}`
+        + '&current=temperature_2m,relative_humidity_2m,precipitation,wind_speed_10m'
+        + '&hourly=soil_moisture_0_to_1cm,soil_moisture_3_to_9cm,soil_moisture_9_to_27cm,soil_temperature_0cm,soil_temperature_6cm,precipitation_probability'
+        + '&timezone=America%2FToronto&forecast_days=1';
+      const r = await fetch(url);
+      if (!r.ok) throw 0;
+      return await r.json();
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function applyWeather(w) {
+    const now = new Date();
+    const h = now.getHours();
+
+    // Defaults / fallback (realistic Niagara spring values)
+    let airT = 14.2, soilT = 11.8, soilMshallow = 0.31, soilMmid = 0.34, soilMdeep = 0.41;
+    let precipNext = 12;
+
+    if (w && w.current && w.hourly) {
+      airT = w.current.temperature_2m ?? airT;
+      const hi = h;
+      soilT = w.hourly.soil_temperature_0cm?.[hi] ?? soilT;
+      const soilT6 = w.hourly.soil_temperature_6cm?.[hi] ?? (soilT - 1.5);
+      soilMshallow = w.hourly.soil_moisture_0_to_1cm?.[hi] ?? soilMshallow;
+      soilMmid = w.hourly.soil_moisture_3_to_9cm?.[hi] ?? soilMmid;
+      soilMdeep = w.hourly.soil_moisture_9_to_27cm?.[hi] ?? soilMdeep;
+      // Find max precip prob in next 12 hours
+      const precipArr = w.hourly.precipitation_probability || [];
+      precipNext = Math.max(...precipArr.slice(hi, hi + 12).filter(v => v != null), 0);
+      // expose for advice logic
+      window._tempData = { airT, soilT, soilT6, soilMshallow, soilMmid, soilMdeep, precipNext };
+    }
+
+    // Convert volumetric m³/m³ to %  (e.g. 0.32 → 32%)
+    const m1 = Math.round(soilMshallow * 100);
+    const m2 = Math.round(soilMmid * 100);
+    const m3 = Math.round(soilMdeep * 100);
+
+    // Top conditions strip
+    const $ = (id) => document.getElementById(id);
+    $('cond-air').innerHTML = `${airT.toFixed(1)}<small>°C</small>`;
+    $('cond-soil-t').innerHTML = `${soilT.toFixed(1)}<small>°C</small>`;
+    $('cond-soil-m').innerHTML = `${m1}<small>%</small>`;
+
+    // Advice logic
+    let advice = { title: 'Hold steady', label: 'Conditions optimal · monitor', cls: '' };
+    if (precipNext >= 50) {
+      advice = { title: 'Hold irrigation', label: `Rain incoming · ${precipNext}% prob next 12h`, cls: 'is-info' };
+    } else if (m1 < 22) {
+      advice = { title: 'Water within 12h', label: 'Topsoil dry · field at risk', cls: 'is-warn' };
+    } else if (m1 < 27) {
+      advice = { title: 'Watch closely', label: 'Trending dry · prep irrigation', cls: 'is-warn' };
+    } else if (m1 > 50) {
+      advice = { title: 'Saturated', label: 'Hold irrigation · check drainage', cls: 'is-info' };
+    }
+    $('cond-advice-title').textContent = advice.title;
+    const advEl = $('cond-advice');
+    advEl.className = 'advice ' + advice.cls;
+    advEl.textContent = advice.label;
+
+    // Soil widget readouts
+    $('r1-moisture').textContent = `${m1}%`;
+    $('r1-temp').textContent     = `${soilT.toFixed(1)}°C`;
+    $('r1-status').textContent   = m1 < 25 ? 'WATER NEEDED' : m1 > 45 ? 'SATURATED' : 'OPTIMAL';
+    $('r1-status').setAttribute('fill', m1 < 25 ? '#D77A3F' : m1 > 45 ? '#3B6B7E' : '#5C8A3C');
+
+    $('r2-moisture').textContent = `${m2}%`;
+    $('r2-temp').textContent     = `${(window._tempData?.soilT6 ?? soilT - 1.5).toFixed(1)}°C`;
+    $('r2-status').textContent   = m2 < 25 ? 'ROOT STRESS' : m2 > 50 ? 'WATERLOGGED' : 'OPTIMAL';
+    $('r2-status').setAttribute('fill', m2 < 25 ? '#D77A3F' : m2 > 50 ? '#3B6B7E' : '#7AB02E');
+
+    $('r3-moisture').textContent = `${m3}%`;
+    $('r3-temp').textContent     = `${(soilT - 3).toFixed(1)}°C`;
+    $('r3-status').textContent   = m3 < 28 ? 'RESERVE LOW' : 'RESERVE OK';
+    $('r3-status').setAttribute('fill', m3 < 28 ? '#D77A3F' : '#7AB02E');
+
+    // Reading time
+    document.getElementById('reading-time').textContent =
+      now.toLocaleTimeString('en-CA', { hour: '2-digit', minute: '2-digit', hour12: false }) + ' EST';
+  }
+
+  fetchWeather().then(applyWeather);
+
+  // Refresh every 5 min
+  setInterval(() => fetchWeather().then(applyWeather), 5 * 60 * 1000);
+
+  /* ─────── Multi-step form ─────── */
+  const form     = document.getElementById('booking');
+  const card     = form.closest('.form-card');
+  const panels   = form.querySelectorAll('.step-panel');
+  const pills    = document.querySelectorAll('.step-pill');
+  const reviewVs = document.querySelectorAll('[data-r]');
+
+  let step = 1;
+
+  function gotoStep(n, opts = {}) {
+    step = Math.max(1, Math.min(4, n));
+    panels.forEach(p => p.classList.toggle('is-active', +p.dataset.step === step));
+    pills.forEach((p, i) => {
+      p.classList.toggle('is-active', i + 1 === step);
+      p.classList.toggle('is-done',  i + 1 < step);
+    });
+    if (step === 4) renderReview();
+    if (!opts.silent) {
+      const top = card.getBoundingClientRect().top + scrollY - 80;
+      if (scrollY > top + 120 || scrollY < top - 120) {
+        scrollTo({ top, behavior: 'smooth' });
+      }
+    }
+    saveDraft();
+  }
+
+  document.querySelectorAll('[data-next]').forEach(b => {
+    b.addEventListener('click', () => {
+      const target = +b.dataset.next;
+      // forward — validate current step required fields
+      if (target > step) {
+        const required = panels[step - 1].querySelectorAll('input[required], textarea[required]');
+        for (const f of required) {
+          if (!f.value.trim()) {
+            f.focus();
+            f.style.borderBottomColor = 'var(--alert)';
+            setTimeout(() => f.style.borderBottomColor = '', 1500);
+            return;
+          }
+        }
+      }
+      gotoStep(target);
+    });
+  });
+
+  pills.forEach(p => {
+    p.addEventListener('click', () => {
+      const target = +p.dataset.go;
+      if (target < step) gotoStep(target);
+      else if (target === step + 1) {
+        const required = panels[step - 1].querySelectorAll('input[required], textarea[required]');
+        for (const f of required) if (!f.value.trim()) { f.focus(); return; }
+        gotoStep(target);
+      }
+    });
+  });
+
+  /* ─────── Doc id + save state ─────── */
+  const docId = 'TX-' + Math.random().toString(36).slice(2, 6).toUpperCase()
+              + '-' + Math.random().toString(36).slice(2, 5).toUpperCase();
+  document.getElementById('docId').textContent = docId;
+
+  let saveTimer = null;
+  const saveStateEl = document.getElementById('saveState');
+  function flashSaving() {
+    saveStateEl.textContent = 'Local · Saving…';
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(() => saveStateEl.textContent = 'Local · Saved', 600);
+  }
+  function saveDraft() {
+    flashSaving();
+    try {
+      const data = Object.fromEntries(new FormData(form));
+      data.__step = step;
+      localStorage.setItem('tnx_draft', JSON.stringify(data));
+    } catch (e) {}
+  }
+  function loadDraft() {
+    try {
+      const raw = localStorage.getItem('tnx_draft');
+      if (!raw) return;
+      const data = JSON.parse(raw);
+      Object.entries(data).forEach(([k, v]) => {
+        if (k.startsWith('__')) return;
+        const el = form.elements.namedItem(k);
+        if (el && typeof v === 'string') el.value = v;
+      });
+      if (data.__step) gotoStep(+data.__step, { silent: true });
+      updatePreview();
+    } catch (e) {}
+  }
+
+  form.addEventListener('input', () => { saveDraft(); updatePreview(); });
+
+  /* ─────── Phone formatting ─────── */
+  const phone = document.getElementById('phone');
+  phone.addEventListener('input', () => {
+    let d = phone.value.replace(/\D/g, '').slice(0, 10);
+    if (d.length > 6)      phone.value = `${d.slice(0,3)}-${d.slice(3,6)}-${d.slice(6)}`;
+    else if (d.length > 3) phone.value = `${d.slice(0,3)}-${d.slice(3)}`;
+    else                   phone.value = d;
+  });
+
+  /* ─────── Live trial preview ─────── */
+  function updatePreview() {
+    const data = Object.fromEntries(new FormData(form));
+    const farm = (data.farmName || '').trim();
+    const name = (data.name || '').trim();
+    const acres = parseFloat((data.acres || '').replace(/[^\d.]/g, '')) || 0;
+
+    const previewFarm = document.getElementById('previewFarm');
+    if (farm) {
+      previewFarm.innerHTML = farm.replace(/(\bfarm[s]?\b|\bfarms?\b)/gi, m => `<em>${m}</em>`);
+    } else {
+      previewFarm.innerHTML = '<span class="placeholder">your farm</span>';
+    }
+
+    document.getElementById('previewName').textContent =
+      (name ? name.toUpperCase() : '—') + ' · NIAGARA REGION';
+
+    document.getElementById('previewAcres').innerHTML =
+      (acres > 0 ? acres.toLocaleString() : '—') + ' <small>ac</small>';
+
+    // Sensor recommendation: 1 per 5 acres, min 2, max 12
+    const sensors = acres > 0 ? Math.min(12, Math.max(2, Math.ceil(acres / 5))) : 2;
+    document.getElementById('previewSensors').innerHTML = sensors + ' <small>nodes</small>';
+
+    // Data points/day = sensors × 4 readings/hr × 24 = sensors × 96
+    document.getElementById('previewPoints').textContent = (sensors * 96).toLocaleString();
+
+    // Trial ends 60 days from today
+    const end = new Date();
+    end.setDate(end.getDate() + 60);
+    document.getElementById('previewThrough').textContent =
+      end.toLocaleDateString('en-CA', { month: 'short', day: 'numeric', year: 'numeric' });
+  }
+
+  /* ─────── Review ─────── */
+  function renderReview() {
+    const data = Object.fromEntries(new FormData(form));
+    const setV = (sel, val) => {
+      const el = document.querySelector(`[data-r="${sel}"]`);
+      if (!el) return;
+      if (val && val.trim && val.trim()) {
+        el.textContent = val;
+        el.classList.remove('empty');
+      } else {
+        el.textContent = '— not provided';
+        el.classList.add('empty');
+      }
+    };
+    setV('name', data.name);
+    setV('farmName', data.farmName);
+    setV('address', (data.address || '').replace(/\n+/g, ', '));
+    const ac = [data.acres && `${data.acres} ac`, data.crop].filter(Boolean).join(' · ');
+    setV('acresCrop', ac);
+    setV('phone', data.phone);
+    setV('email', data.email);
+    setV('salesRep', data.salesRep);
+    setV('stamp', new Date().toLocaleString('en-CA', {
+      timeZone: 'America/Toronto', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit'
+    }));
+  }
+
+  /* ─────── Submit ─────── */
+  function showFieldError(f, msg) {
+    const field = f.closest('.field') || f.parentElement;
+    if (!field) return;
+    field.classList.add('field--error');
+    let note = field.querySelector('.field-error');
+    if (!note) {
+      note = document.createElement('div');
+      note.className = 'field-error';
+      field.appendChild(note);
+    }
+    note.textContent = msg;
+  }
+  function clearFieldError(f) {
+    const field = f.closest('.field') || f.parentElement;
+    if (!field) return;
+    field.classList.remove('field--error');
+    const note = field.querySelector('.field-error');
+    if (note) note.remove();
+  }
+  // Clear the error as soon as the user starts typing in the field.
+  form.addEventListener('input', (e) => {
+    if (e.target.matches('input, textarea')) clearFieldError(e.target);
+  });
+
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+
+    // Validate all required across all steps
+    const allRequired = form.querySelectorAll('input[required], textarea[required]');
+    for (const f of allRequired) {
+      if (!f.value.trim()) {
+        // jump to that step
+        const panel = f.closest('.step-panel');
+        if (panel) gotoStep(+panel.dataset.step);
+        showFieldError(f, 'We need this to send your request.');
+        // Scroll the field into view, then focus (focus first can cause iOS to fight us).
+        setTimeout(() => {
+          if (f.scrollIntoView) f.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          f.focus({ preventScroll: true });
+        }, 60);
+        return;
+      }
+    }
+
+    const data = Object.fromEntries(new FormData(form));
+    const dash = '—';
+    const v = (k) => (data[k] && String(data[k]).trim()) || dash;
+
+    const subject = `Free Trial Request — ${v('farmName') !== dash ? v('farmName') : v('name')}`;
+
+    const stamp = new Date().toLocaleString('en-CA', {
+      timeZone: 'America/Toronto',
+      year: 'numeric', month: 'short', day: 'numeric',
+      hour: 'numeric', minute: '2-digit'
+    });
+
+    const acresCrop = [data.acres && `${data.acres} ac`, data.crop].filter(Boolean).join(' · ') || dash;
+
+    const body = [
+      'New free-trial request submitted via terranexis.ca',
+      '',
+      `Doc ID      :  ${docId}`,
+      '────────────────────────',
+      `Name        :  ${v('name')}`,
+      `Farm Name   :  ${v('farmName')}`,
+      `Address     :  ${v('address').replace(/\n+/g, ', ')}`,
+      `Acres / Crop:  ${acresCrop}`,
+      `Phone       :  ${v('phone')}`,
+      `Email       :  ${v('email')}`,
+      `Sales Rep   :  ${v('salesRep')}`,
+      '────────────────────────',
+      '',
+      'Notes:',
+      v('notes'),
+      '',
+      `— Submitted ${stamp} (America/Toronto)`,
+      `— Cohort: Spring 2026 · Niagara Region`
+    ].join('\n');
+
+    const url = 'mailto:info@terranexis.ca'
+      + '?subject=' + encodeURIComponent(subject)
+      + '&body=' + encodeURIComponent(body);
+
+    document.getElementById('successDetail').textContent =
+      `Your mail app should be open with a pre-filled message to info@terranexis.ca for ${v('farmName') !== dash ? v('farmName') : 'your farm'} (Doc ${docId}). Hit send to complete your booking.`;
+
+    location.href = url;
+
+    setTimeout(() => {
+      card.classList.add('is-submitted');
+      try { localStorage.removeItem('tnx_draft'); } catch (e) {}
+      scrollTo({ top: card.getBoundingClientRect().top + scrollY - 80, behavior: 'smooth' });
+    }, 250);
+  });
+
+  /* ─────── Boot ─────── */
+  loadDraft();
+  updatePreview();
+  document.getElementById('previewStamp').textContent = 'Spring 2026 · ' + docId;
+
+  /* ─────── Soil profile parallax (subtle) ─────── */
+  const widget = document.querySelector('.soil-widget');
+  if (matchMedia('(hover: hover) and (pointer: fine)').matches && widget) {
+    widget.addEventListener('mousemove', (e) => {
+      const r = widget.getBoundingClientRect();
+      const x = (e.clientX - r.left) / r.width  - 0.5;
+      const y = (e.clientY - r.top)  / r.height - 0.5;
+      widget.style.transform = `perspective(1200px) rotateY(${x * 1.5}deg) rotateX(${-y * 1.5}deg)`;
+    });
+    widget.addEventListener('mouseleave', () => {
+      widget.style.transform = '';
+      widget.style.transition = 'transform 0.6s cubic-bezier(0.2,0.8,0.2,1)';
+      setTimeout(() => widget.style.transition = '', 700);
+    });
+  }
+
+  /* ─────── Floating "Book Trial" FAB (mobile) ─────── */
+  const fab = document.querySelector('.fab');
+  const heroEl = document.querySelector('.hero');
+  const formEl = document.querySelector('.form-card');
+  if (fab && heroEl && formEl && 'IntersectionObserver' in window) {
+    let pastHero = false, formInView = false;
+    const update = () => {
+      fab.classList.toggle('is-visible', pastHero && !formInView);
+    };
+    new IntersectionObserver(([e]) => {
+      pastHero = !e.isIntersecting && e.boundingClientRect.top < 0;
+      update();
+    }, { threshold: 0 }).observe(heroEl);
+    new IntersectionObserver(([e]) => {
+      formInView = e.intersectionRatio > 0.15;
+      update();
+    }, { threshold: [0, 0.15, 0.3] }).observe(formEl);
+  }
+
+  /* ─────── Map ↔ Stations linking (hover on desktop, tap on touch) ─────── */
+  const mapNodes = document.querySelectorAll('.niagara-svg [data-link]');
+  const rowNodes = document.querySelectorAll('.station-row[data-link]');
+  const byKey = {};
+  [...mapNodes, ...rowNodes].forEach(el => {
+    const k = el.dataset.link;
+    if (!byKey[k]) byKey[k] = [];
+    byKey[k].push(el);
+    // SVG circles need a real tap surface — bump the hit area on touch.
+    if (el.tagName === 'circle' || el.tagName === 'CIRCLE') {
+      el.style.cursor = 'pointer';
+    }
+  });
+
+  let activeKey = null;
+  function highlight(key, on) {
+    if (!byKey[key]) return;
+    byKey[key].forEach(el => el.classList.toggle('is-highlighted', on));
+  }
+  function setActive(key, sourceEl) {
+    if (activeKey && activeKey !== key) highlight(activeKey, false);
+    activeKey = key;
+    highlight(key, true);
+    // On a phone-sized viewport, a tap on the map should reveal the row.
+    if (sourceEl && !hasHover && (sourceEl.tagName === 'circle' || sourceEl.tagName === 'CIRCLE')) {
+      const row = byKey[key].find(el => el.classList.contains('station-row'));
+      if (row && row.scrollIntoView) {
+        row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    }
+  }
+  function clearActive() {
+    if (activeKey) highlight(activeKey, false);
+    activeKey = null;
+  }
+
+  const hasHover = matchMedia('(hover: hover) and (pointer: fine)').matches;
+
+  Object.entries(byKey).forEach(([key, els]) => {
+    els.forEach(el => {
+      if (hasHover) {
+        el.addEventListener('mouseenter', () => highlight(key, true));
+        el.addEventListener('mouseleave', () => {
+          if (activeKey !== key) highlight(key, false);
+        });
+      }
+      // Click works for both — keyboard, mouse, and touch all dispatch click.
+      el.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (activeKey === key) clearActive();
+        else setActive(key, el);
+      });
+    });
+  });
+
+  // Tap outside the map/list clears the active highlight.
+  document.addEventListener('click', (e) => {
+    if (e.target.closest('.niagara-svg [data-link]')) return;
+    if (e.target.closest('.station-row[data-link]')) return;
+    clearActive();
+  });
+})();
+</script>
+
+</body>
+</html>

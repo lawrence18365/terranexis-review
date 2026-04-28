@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0D1A12">
+<title>Field Station 04 — Design Review · TerraNexis</title>
+<meta name="description" content="Two design directions for the TerraNexis Field Station 04 booking page. Click through and let us know which one feels right.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Instrument+Sans:ital,wght@0,400..700;1,400..700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --paper:        #F2EBD3;
+  --paper-warm:   #FAF4DD;
+  --paper-grid:   #E5DCBE;
+  --ink:          #0D1A12;
+  --ink-soft:     #2D3A30;
+  --moss:         #1F3D24;
+  --leaf:         #5C8A3C;
+  --leaf-bright:  #7AB02E;
+  --terra:        #B86F44;
+  --rule:         #C9BD9C;
+  --ease:         cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body { height: 100%; }
+
+body {
+  font-family: "Instrument Sans", -apple-system, system-ui, sans-serif;
+  font-size: 16.5px;
+  line-height: 1.55;
+  color: var(--ink);
+  background: var(--paper);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  letter-spacing: -0.005em;
+  background-image:
+    linear-gradient(var(--paper-grid) 0.5px, transparent 0.5px),
+    linear-gradient(90deg, var(--paper-grid) 0.5px, transparent 0.5px),
+    radial-gradient(ellipse 90% 60% at 100% 0%, rgba(124,180,58,0.06), transparent 65%),
+    radial-gradient(ellipse 60% 40% at 0% 90%, rgba(184,111,68,0.05), transparent 60%);
+  background-size: 32px 32px, 32px 32px, 100% 100%, 100% 100%;
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  position: relative;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence baseFrequency='0.92' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.05 0 0 0 0 0.10 0 0 0 0 0.07 0 0 0 0.05 0'/></filter><rect width='220' height='220' filter='url(%23n)'/></svg>");
+  mix-blend-mode: multiply;
+  opacity: 0.55;
+}
+
+.container {
+  position: relative;
+  z-index: 2;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 32px 40px 24px;
+  max-width: 1320px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+/* ─────── Top brandbar ─────── */
+.brandbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10.5px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  padding-bottom: 22px;
+  border-bottom: 1px solid var(--rule);
+}
+
+.brandbar .mark {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+}
+
+.brandbar .mark strong {
+  font-family: "Fraunces", serif;
+  font-weight: 500;
+  font-size: 17px;
+  letter-spacing: -0.01em;
+  text-transform: none;
+  color: var(--ink);
+}
+
+.brandbar .mark .sep {
+  width: 1px;
+  height: 12px;
+  background: var(--rule);
+  align-self: center;
+}
+
+/* ─────── Intro ─────── */
+.intro {
+  padding: 72px 0 48px;
+  max-width: 760px;
+}
+
+.intro .eyebrow {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--leaf);
+  margin-bottom: 22px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.intro .eyebrow::before {
+  content: "";
+  width: 24px;
+  height: 1px;
+  background: var(--leaf);
+}
+
+.intro h1 {
+  font-family: "Fraunces", serif;
+  font-weight: 350;
+  font-size: clamp(38px, 5.6vw, 72px);
+  line-height: 1.02;
+  letter-spacing: -0.025em;
+  color: var(--ink);
+  margin-bottom: 22px;
+}
+
+.intro h1 em {
+  font-style: italic;
+  color: var(--moss);
+  font-weight: 400;
+}
+
+.intro p {
+  font-size: 17px;
+  color: var(--ink-soft);
+  max-width: 540px;
+}
+
+/* ─────── Direction cards ─────── */
+.directions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 22px;
+  margin-top: 12px;
+}
+
+.card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  background: var(--paper-warm);
+  border: 1px solid var(--rule);
+  padding: 32px 34px 28px;
+  text-decoration: none;
+  color: inherit;
+  min-height: 380px;
+  overflow: hidden;
+  transition:
+    transform 0.45s var(--ease),
+    border-color 0.3s,
+    background 0.3s,
+    box-shadow 0.45s var(--ease);
+}
+
+.card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 80% 60% at 50% 110%, rgba(31, 61, 36, 0.05), transparent 70%);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.4s var(--ease);
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  border-color: var(--moss);
+  box-shadow: 0 18px 48px -28px rgba(13, 26, 18, 0.35);
+}
+
+.card:hover::after { opacity: 1; }
+
+.card .corner {
+  position: absolute;
+  top: 14px;
+  right: 16px;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  color: var(--ink-soft);
+  opacity: 0.55;
+}
+
+.card .label {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.card .label .dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--leaf);
+}
+
+.card.b .label .dot { background: var(--terra); }
+
+.card .letter {
+  font-family: "Fraunces", serif;
+  font-weight: 300;
+  font-size: clamp(150px, 19vw, 240px);
+  line-height: 0.85;
+  letter-spacing: -0.05em;
+  color: var(--moss);
+  margin: 22px 0 auto;
+  position: relative;
+  z-index: 1;
+  display: inline-block;
+}
+
+.card.b .letter {
+  font-style: italic;
+  font-weight: 400;
+}
+
+.card .name {
+  font-family: "Fraunces", serif;
+  font-size: 22px;
+  font-weight: 400;
+  letter-spacing: -0.015em;
+  color: var(--ink);
+  margin-bottom: 6px;
+}
+
+.card .desc {
+  font-size: 14.5px;
+  color: var(--ink-soft);
+  margin-bottom: 22px;
+  max-width: 360px;
+}
+
+.card .cta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11.5px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--moss);
+  padding-top: 18px;
+  border-top: 1px solid var(--rule);
+  width: 100%;
+}
+
+.card .cta .arrow {
+  position: relative;
+  width: 36px;
+  height: 1px;
+  background: var(--moss);
+  transition: width 0.35s var(--ease);
+}
+
+.card .cta .arrow::after {
+  content: "";
+  position: absolute;
+  right: 0; top: 50%;
+  width: 7px; height: 7px;
+  border-top: 1px solid var(--moss);
+  border-right: 1px solid var(--moss);
+  transform: translateY(-50%) rotate(45deg);
+}
+
+.card:hover .cta .arrow { width: 64px; }
+
+/* ─────── Footer ─────── */
+.footer {
+  position: relative;
+  z-index: 2;
+  padding: 22px 40px 28px;
+  max-width: 1320px;
+  width: 100%;
+  margin: 0 auto;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10.5px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  display: flex;
+  justify-content: space-between;
+  border-top: 1px solid var(--rule);
+}
+
+.footer .helper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.footer kbd {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10px;
+  background: var(--paper-warm);
+  border: 1px solid var(--rule);
+  padding: 2px 6px;
+  border-radius: 3px;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--ink);
+}
+
+@media (max-width: 760px) {
+  .container { padding: 22px 20px 16px; }
+  .footer { padding: 18px 20px 22px; flex-direction: column; gap: 8px; align-items: flex-start; }
+  .directions { grid-template-columns: 1fr; gap: 14px; }
+  .card { min-height: 280px; padding: 26px 24px 22px; }
+  .intro { padding: 44px 0 28px; }
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <header class="brandbar">
+    <div class="mark">
+      <strong>TerraNexis</strong>
+      <span class="sep"></span>
+      <span>Field Station 04</span>
+    </div>
+    <span>Design Review · v1</span>
+  </header>
+
+  <section class="intro">
+    <div class="eyebrow">v1 concepts · Two directions</div>
+    <h1>Two early drafts to <em>walk through.</em></h1>
+    <p>These are first-pass prototypes — copy, photos, and contact details are placeholders we'll dial in later. Direction B is the one we built around your brief; Direction A is a wider stretch to show the range we can take it. Click around on either, on phone or laptop, and tell us which one feels closest to home.</p>
+  </section>
+
+  <nav class="directions">
+
+    <a class="card b" href="direction-B.html">
+      <span class="corner">v1 · recommended</span>
+      <div class="label"><span class="dot"></span>Direction B</div>
+      <div class="letter">B</div>
+      <div class="name">The route built for you.</div>
+      <div class="desc">Based on your brief — landing page, free-trial offer, plain language, room to grow.</div>
+      <div class="cta">
+        <span>Open prototype</span>
+        <span class="arrow"></span>
+      </div>
+    </a>
+
+    <a class="card a" href="direction-A.html">
+      <span class="corner">v1 · stretch concept</span>
+      <div class="label"><span class="dot"></span>Direction A</div>
+      <div class="letter">A</div>
+      <div class="name">A wider stretch.</div>
+      <div class="desc">A more editorial take — same booking flow, more ambitious visuals. Shows where we could push it.</div>
+      <div class="cta">
+        <span>Open prototype</span>
+        <span class="arrow"></span>
+      </div>
+    </a>
+
+  </nav>
+
+</div>
+
+<footer class="footer">
+  <span>TerraNexis · Niagara, ON</span>
+  <span class="helper">Tip · press <kbd>A</kbd> or <kbd>B</kbd> to jump in</span>
+</footer>
+
+<script>
+  document.addEventListener("keydown", (e) => {
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    const k = e.key.toLowerCase();
+    if (k === "a") window.location.href = "direction-A.html";
+    if (k === "b") window.location.href = "direction-B.html";
+  });
+</script>
+
+</body>
+</html>
