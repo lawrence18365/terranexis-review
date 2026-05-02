@@ -4,3 +4,9 @@ Thumbs.db
 .vscode/
 .idea/
 node_modules/
+
+# local render/debug artifacts
+page-2-render-*.png
+page-2-top-*.png
+_probe*.html
+_no_anim*.html
