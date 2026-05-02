@@ -3,26 +3,28 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#042C17">
+<meta name="theme-color" content="#04200E">
 <title>TerraNexis — Know More. Waste Less. Grow Better.</title>
-<meta name="description" content="Real-time soil and weather intelligence for Ontario farms. Start a 60-day pilot — $100 setup, $49/mo, cancel anytime.">
+<meta name="description" content="60-day farm pilot for Ontario growers. $100 setup, $49/mo, cancel anytime. Real-time soil and weather alerts.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
 <style>
 /* ═══════════════════════════════════════════════════════════════
-   TerraNexis · Page 2 — Refined Ag-Tech SaaS
+   TerraNexis · Page 2 — Farm Pilot Flyer
    ─────────────────────────────────────────────────────────────── */
 
 :root {
-  --green-deep:    #042C17;
-  --green-dark:    #0E3A1E;
-  --green-mid:     #2C642B;
-  --green-leaf:    #4D842D;
+  --green-deep:    #04200E;
+  --green-darker:  #02160A;
+  --green-dark:    #0A3219;
+  --green-mid:     #143B1E;
   --green-bright:  #5D8D2C;
   --green-glow:    #9CCB32;
   --green-soft:    #E6EFD7;
-  --green-mist:    #F2F5E8;
+
+  --lime:          #C9E83D;
+  --lime-soft:     rgba(201, 232, 61, 0.18);
 
   --ink:           #0A2113;
   --ink-soft:      #4A5A4F;
@@ -31,18 +33,12 @@
   --paper-warm:    #F6F0DC;
   --rule:          #E2DBC2;
   --rule-soft:     #EFEAD3;
+  --rule-dark:     rgba(255, 255, 255, 0.14);
 
-  --shadow-card:   0 18px 42px -28px rgba(4, 44, 23, 0.45);
-  --shadow-deep:   0 28px 62px -34px rgba(4, 44, 23, 0.58);
-  --shadow-photo:  0 40px 80px -40px rgba(4, 44, 23, 0.55), 0 0 0 1px rgba(4, 44, 23, 0.06);
+  --shadow-card:   0 18px 42px -28px rgba(4, 32, 14, 0.5);
+  --shadow-deep:   0 30px 60px -24px rgba(0, 0, 0, 0.6);
 
   --ease:          cubic-bezier(0.2, 0.8, 0.2, 1);
-
-  --z-base:        0;
-  --z-content:     1;
-  --z-overlay:     5;
-  --z-topbar:      40;
-  --z-card:        20;
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -52,114 +48,116 @@ html, body { background: var(--paper); }
 body {
   font-family: "DM Sans", -apple-system, system-ui, sans-serif;
   font-size: 16px;
-  line-height: 1.55;
+  line-height: 1.5;
   color: var(--ink);
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
-  background: var(--paper);
 }
 
-::selection { background: var(--green-glow); color: var(--green-deep); }
+::selection { background: var(--lime); color: var(--green-deep); }
 
 a:focus-visible {
-  outline: 3px solid rgba(156, 203, 50, 0.7);
+  outline: 3px solid rgba(201, 232, 61, 0.7);
   outline-offset: 3px;
-  border-radius: 4px;
+  border-radius: 2px;
 }
 
 img { display: block; max-width: 100%; }
 
-/* ─────── Topbar (cream, slim, useful) ─────── */
+/* ═══════════════════════════════════════════════════════════════
+   Hero — full-bleed photo + dark overlay + masthead + offer
+   ─────────────────────────────────────────────────────────────── */
+.hero {
+  position: relative;
+  isolation: isolate;
+  padding: 64px clamp(20px, 4vw, 56px) 0;
+  background:
+    linear-gradient(178deg,
+      rgba(2, 18, 8, 0.94) 0%,
+      rgba(4, 28, 12, 0.84) 32%,
+      rgba(4, 28, 12, 0.72) 60%,
+      rgba(4, 28, 12, 0.86) 100%),
+    url('assets/hero-farm.png') center 32% / cover no-repeat;
+  color: #fff;
+  overflow: hidden;
+}
+
+.hero::before {
+  /* Subtle paper-grain texture, low opacity */
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.05 0 0 0 0 0.16 0 0 0 0 0.07 0 0 0 0.06 0'/></filter><rect width='220' height='220' filter='url(%23n)'/></svg>");
+  opacity: 0.5;
+  mix-blend-mode: multiply;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.hero::after {
+  /* Lime accent radial in upper-right */
+  content: "";
+  position: absolute;
+  top: -160px;
+  right: -120px;
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle, rgba(201, 232, 61, 0.18), transparent 60%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* — Topbar (slim, dark, integrated) — */
 .topbar {
-  position: sticky;
+  position: absolute;
   top: 0;
-  z-index: var(--z-topbar);
-  background: rgba(251, 248, 238, 0.92);
-  backdrop-filter: saturate(1.4) blur(10px);
-  -webkit-backdrop-filter: saturate(1.4) blur(10px);
-  border-bottom: 1px solid var(--rule);
+  left: 0;
+  right: 0;
+  height: 44px;
+  z-index: 5;
+  background: rgba(2, 18, 8, 0.66);
+  backdrop-filter: saturate(1.3) blur(6px);
+  -webkit-backdrop-filter: saturate(1.3) blur(6px);
+  border-bottom: 1px solid var(--rule-dark);
 }
 
 .topbar-inner {
   max-width: 1480px;
   margin: 0 auto;
-  height: 68px;
+  height: 100%;
   padding: 0 clamp(20px, 4vw, 56px);
-  display: grid;
-  grid-template-columns: auto 1fr auto;
+  display: flex;
   align-items: center;
-  gap: 32px;
+  justify-content: space-between;
+  gap: 24px;
+  font-family: "Archivo", sans-serif;
 }
 
-.tb-brand {
+.tb-live {
   display: inline-flex;
   align-items: center;
-  gap: 11px;
-  text-decoration: none;
-  color: inherit;
+  gap: 9px;
+  font-size: 10.5px;
+  font-weight: 800;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.86);
+  white-space: nowrap;
 }
 
-.tb-mark {
-  width: 32px;
-  height: 32px;
-  display: grid;
-  place-items: center;
-  border-radius: 8px;
-  background: linear-gradient(135deg, var(--green-bright) 0%, var(--green-deep) 110%);
-  box-shadow:
-    0 6px 14px -8px rgba(4, 44, 23, 0.55),
-    inset 0 1px 0 rgba(255, 255, 255, 0.18);
+.tb-live .ld {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--lime);
+  box-shadow: 0 0 0 0 rgba(201, 232, 61, 0.55);
+  animation: pulse-soft 1.8s var(--ease) infinite;
 }
 
-.tb-mark svg { width: 18px; height: 18px; color: #fff; }
-
-.tb-word {
-  font-family: "Archivo", sans-serif;
-  font-weight: 900;
-  font-size: 17px;
-  letter-spacing: 0.02em;
-  color: var(--green-deep);
-  line-height: 1;
+.tb-live .sep {
+  opacity: 0.55;
+  margin: 0 3px;
 }
-
-.tb-word .nx { color: var(--green-bright); }
-
-.tb-nav {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 28px;
-  list-style: none;
-}
-
-.tb-nav a {
-  font-family: "Archivo", sans-serif;
-  font-size: 13.5px;
-  font-weight: 600;
-  letter-spacing: 0.02em;
-  color: var(--ink-soft);
-  text-decoration: none;
-  transition: color 0.2s;
-  position: relative;
-  padding: 4px 0;
-}
-
-.tb-nav a:hover { color: var(--green-deep); }
-
-.tb-nav a::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  bottom: -2px;
-  width: 100%;
-  height: 1.5px;
-  background: var(--green-bright);
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: transform 0.3s var(--ease);
-}
-
-.tb-nav a:hover::after { transform: scaleX(1); }
 
 .tb-actions {
   display: inline-flex;
@@ -173,452 +171,492 @@ img { display: block; max-width: 100%; }
   gap: 9px;
   font-family: "Archivo", sans-serif;
   font-weight: 700;
-  font-size: 14.5px;
-  color: var(--ink);
+  font-size: 13.5px;
+  letter-spacing: 0.04em;
+  color: rgba(255, 255, 255, 0.92);
   text-decoration: none;
-  letter-spacing: 0.01em;
   transition: color 0.2s;
 }
 
 .tb-phone svg {
-  width: 14px;
-  height: 14px;
-  color: var(--green-bright);
+  width: 13px;
+  height: 13px;
+  color: var(--lime);
 }
 
-.tb-phone:hover { color: var(--green-deep); }
+.tb-phone:hover { color: #fff; }
 
 .tb-cta {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 11px 20px;
-  background: var(--green-deep);
-  color: #fff;
+  padding: 8px 16px;
+  background: var(--lime);
+  color: var(--green-deep);
   font-family: "Archivo", sans-serif;
-  font-weight: 700;
-  font-size: 13px;
-  letter-spacing: 0.06em;
+  font-weight: 900;
+  font-size: 11.5px;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
-  border-radius: 999px;
+  border-radius: 3px;
   text-decoration: none;
-  transition: background 0.25s, transform 0.3s var(--ease), box-shadow 0.3s var(--ease);
-  box-shadow: 0 8px 18px -10px rgba(4, 44, 23, 0.55);
+  transition: background 0.2s, transform 0.25s var(--ease);
+  box-shadow: 0 6px 14px -6px rgba(201, 232, 61, 0.65);
 }
 
-.tb-cta svg { width: 14px; height: 14px; }
+.tb-cta svg {
+  width: 11px;
+  height: 11px;
+  transition: transform 0.25s var(--ease);
+}
 
 .tb-cta:hover {
-  background: var(--green-bright);
+  background: #D9F045;
   transform: translateY(-1px);
-  box-shadow: 0 14px 26px -12px rgba(4, 44, 23, 0.6);
 }
 
-/* ─────── Hero (single focal point) ─────── */
-.hero {
-  position: relative;
-  padding: clamp(56px, 6vw, 96px) clamp(20px, 4vw, 56px) clamp(96px, 9vw, 144px);
-  overflow: hidden;
-}
-
-.hero::before {
-  content: "";
-  position: absolute;
-  inset: -120px -160px auto auto;
-  width: 620px;
-  height: 620px;
-  background: radial-gradient(circle at 50% 50%, rgba(156, 203, 50, 0.12), transparent 62%);
-  pointer-events: none;
-  z-index: var(--z-base);
-}
+.tb-cta:hover svg { transform: translateX(2px); }
 
 .hero-inner {
   position: relative;
-  z-index: var(--z-content);
-  max-width: 1440px;
+  z-index: 2;
+  max-width: 1380px;
   margin: 0 auto;
-  display: grid;
-  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
-  gap: clamp(40px, 5vw, 88px);
+}
+
+/* — Masthead (big logo + tagline) — */
+.masthead {
+  display: flex;
   align-items: center;
+  gap: clamp(16px, 1.6vw, 22px);
+  padding-bottom: clamp(22px, 2.4vw, 32px);
+  margin-bottom: clamp(28px, 3.2vw, 44px);
+  border-bottom: 1px solid var(--rule-dark);
+  position: relative;
 }
 
-/* — Left column — */
-.hero-content {
-  max-width: 600px;
-}
-
-.hero-eyebrow {
-  display: inline-flex;
-  align-items: center;
-  gap: 11px;
-  font-family: "Archivo", sans-serif;
-  font-size: 11.5px;
-  font-weight: 800;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: var(--green-bright);
-  margin-bottom: 26px;
-}
-
-.hero-eyebrow::before {
+.masthead::after {
   content: "";
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--green-bright);
-  box-shadow: 0 0 0 0 rgba(156, 203, 50, 0.5);
-  animation: pulse-soft 2.4s var(--ease) infinite;
+  position: absolute;
+  left: 0;
+  bottom: -1px;
+  width: 96px;
+  height: 3px;
+  background: var(--lime);
 }
+
+.masthead-mark {
+  width: clamp(58px, 5.2vw, 76px);
+  height: clamp(58px, 5.2vw, 76px);
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(135deg, var(--lime) 0%, var(--green-bright) 110%);
+  border-radius: 12px;
+  box-shadow:
+    0 12px 28px -10px rgba(0, 0, 0, 0.55),
+    inset 0 1px 0 rgba(255, 255, 255, 0.32);
+  position: relative;
+}
+
+.masthead-mark::after {
+  content: "";
+  position: absolute;
+  inset: 4px;
+  border-radius: 9px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  pointer-events: none;
+}
+
+.masthead-mark svg {
+  width: 56%;
+  height: 56%;
+  color: var(--green-deep);
+  position: relative;
+  z-index: 1;
+}
+
+.masthead-text {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.masthead-word {
+  font-family: "Archivo", sans-serif;
+  font-weight: 900;
+  font-size: clamp(38px, 4.8vw, 64px);
+  line-height: 0.9;
+  letter-spacing: -0.025em;
+  color: #fff;
+  text-transform: uppercase;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+  display: inline-flex;
+  white-space: nowrap;
+}
+
+.masthead-word .nx { color: var(--lime); }
+
+.masthead-tagline {
+  font-family: "Archivo", sans-serif;
+  font-size: clamp(11px, 1vw, 13.5px);
+  font-weight: 800;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.78);
+}
+
+/* — Hero body grid — */
+.hero-body {
+  display: grid;
+  grid-template-columns: minmax(0, 1.18fr) minmax(0, 1fr);
+  gap: clamp(32px, 3.6vw, 64px);
+  align-items: stretch;
+  padding-bottom: clamp(36px, 4vw, 56px);
+}
+
+/* — Headline + feature list — */
+.hero-content { display: flex; flex-direction: column; }
 
 .hero h1 {
   font-family: "Archivo", sans-serif;
   font-weight: 900;
-  font-size: clamp(46px, 5.4vw, 82px);
+  font-size: clamp(46px, 5.4vw, 78px);
   line-height: 0.96;
   letter-spacing: -0.025em;
-  color: var(--ink);
-  margin-bottom: 22px;
+  color: #fff;
+  text-transform: uppercase;
+  margin-bottom: clamp(20px, 2vw, 28px);
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.35);
 }
 
 .hero h1 em {
   font-style: normal;
-  color: var(--green-bright);
-  position: relative;
-  display: inline-block;
-  background-image: linear-gradient(transparent 64%, rgba(156, 203, 50, 0.18) 64%);
-  background-repeat: no-repeat;
-  background-size: 100% 100%;
-  padding: 0 0.04em;
-  margin: 0 -0.04em;
+  color: var(--lime);
 }
 
-.hero-lead {
-  font-size: clamp(17px, 1.2vw, 19px);
-  line-height: 1.55;
-  color: var(--ink-soft);
-  max-width: 520px;
-  margin-bottom: 36px;
+.hero-feature-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.hero-feature-list li {
+  display: grid;
+  grid-template-columns: 52px 1fr;
+  gap: 16px;
+  align-items: center;
+  padding: 12px 16px 12px 12px;
+  background: rgba(0, 0, 0, 0.32);
+  border-left: 3px solid var(--lime);
+  border-radius: 3px;
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+  transition: background 0.25s, border-color 0.25s, transform 0.3s var(--ease);
+}
+
+.hero-feature-list li:hover {
+  background: rgba(0, 0, 0, 0.42);
+  border-left-color: #D9F045;
+  transform: translateX(3px);
+}
+
+.hero-feature-list .ico {
+  width: 52px;
+  height: 52px;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  background: var(--lime);
+  border-radius: 3px;
+  color: var(--green-deep);
+  box-shadow:
+    0 6px 14px -6px rgba(201, 232, 61, 0.55),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4);
+}
+
+.hero-feature-list .ico svg {
+  width: 28px;
+  height: 28px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.hero-feature-list .ftext {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.hero-feature-list .fname {
+  font-family: "Archivo", sans-serif;
+  font-weight: 900;
+  font-size: 15.5px;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: #fff;
+  line-height: 1.15;
+}
+
+.hero-feature-list .fdesc {
+  font-size: 13.5px;
+  color: rgba(255, 255, 255, 0.78);
+  line-height: 1.4;
   font-weight: 400;
 }
 
-.hero-cta-row {
+/* — The big offer card — */
+.offer-card {
+  position: relative;
   display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 22px;
-  margin-bottom: 34px;
-}
-
-.btn-primary {
-  display: inline-flex;
-  align-items: center;
-  gap: 12px;
-  padding: 17px 30px 17px 32px;
-  background: var(--green-deep);
+  flex-direction: column;
+  background:
+    radial-gradient(ellipse 80% 100% at 100% 0%, rgba(201, 232, 61, 0.16), transparent 60%),
+    linear-gradient(180deg, var(--green-dark) 0%, var(--green-darker) 100%);
+  border: 3px solid var(--lime);
+  border-radius: 6px;
+  padding: clamp(24px, 2.6vw, 32px) clamp(24px, 2.6vw, 34px) clamp(22px, 2.4vw, 28px);
   color: #fff;
-  border-radius: 999px;
-  font-family: "Archivo", sans-serif;
-  font-weight: 700;
-  font-size: 15.5px;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  text-decoration: none;
-  transition: background 0.25s, transform 0.3s var(--ease), box-shadow 0.3s var(--ease);
-  box-shadow: 0 18px 32px -18px rgba(4, 44, 23, 0.6);
-  position: relative;
-  overflow: hidden;
+  box-shadow:
+    var(--shadow-deep),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
 }
 
-.btn-primary svg {
-  width: 16px;
-  height: 16px;
-  transition: transform 0.3s var(--ease);
-}
-
-.btn-primary:hover {
-  background: linear-gradient(135deg, var(--green-deep) 0%, #0e4220 100%);
-  transform: translateY(-2px);
-  box-shadow: 0 24px 40px -18px rgba(4, 44, 23, 0.7);
-}
-
-.btn-primary:hover svg { transform: translateX(3px); }
-
-.btn-secondary {
-  display: inline-flex;
-  align-items: center;
-  gap: 9px;
-  font-family: "Archivo", sans-serif;
-  font-weight: 700;
-  font-size: 14.5px;
-  letter-spacing: 0.02em;
-  color: var(--ink);
-  text-decoration: none;
-  padding: 8px 0;
-  border-bottom: 1.5px solid transparent;
-  transition: color 0.25s, border-color 0.25s, gap 0.3s var(--ease);
-}
-
-.btn-secondary svg {
-  width: 14px;
-  height: 14px;
-  color: var(--green-bright);
-}
-
-.btn-secondary:hover {
-  color: var(--green-deep);
-  border-bottom-color: var(--green-bright);
-  gap: 13px;
-}
-
-.hero-proof {
-  list-style: none;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 24px;
-  padding-top: 28px;
-  border-top: 1px solid var(--rule);
-}
-
-.hero-proof li {
-  display: inline-flex;
-  align-items: center;
-  gap: 9px;
-  font-size: 14.5px;
-  font-weight: 500;
-  color: var(--ink-soft);
-  letter-spacing: -0.005em;
-}
-
-.hero-proof svg {
-  width: 18px;
-  height: 18px;
-  color: var(--green-bright);
-  flex-shrink: 0;
-  stroke-width: 2.4;
-}
-
-.hero-proof strong {
-  color: var(--ink);
-  font-weight: 700;
-}
-
-/* — Right column: photo + floating pilot card — */
-.hero-visual {
-  position: relative;
-  align-self: stretch;
-  min-height: 520px;
-}
-
-.hero-photo {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  min-height: 520px;
-  border-radius: 22px;
-  overflow: hidden;
-  background: var(--green-soft);
-  box-shadow: var(--shadow-photo);
-  isolation: isolate;
-}
-
-.hero-photo img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center 38%;
-  display: block;
-}
-
-/* Subtle inner edge highlight, no overlay */
-.hero-photo::after {
+.offer-card::before {
   content: "";
   position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  inset: 8px;
+  border: 1px solid rgba(201, 232, 61, 0.22);
+  border-radius: 3px;
   pointer-events: none;
 }
 
-.hero-photo-tag {
-  position: absolute;
-  top: 22px;
-  left: 22px;
-  display: inline-flex;
-  align-items: center;
-  gap: 9px;
-  padding: 9px 14px 9px 12px;
-  background: rgba(4, 44, 23, 0.78);
-  -webkit-backdrop-filter: blur(8px);
-  backdrop-filter: blur(8px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 999px;
-  font-family: "Archivo", sans-serif;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: #fff;
-  z-index: 2;
-}
-
-.hero-photo-tag .ld {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: var(--green-glow);
-  box-shadow: 0 0 0 0 rgba(156, 203, 50, 0.55);
-  animation: pulse-soft 2s var(--ease) infinite;
-}
-
-/* Floating pilot card — overlaps lower-left of photo, raised */
-.pilot-card {
-  position: absolute;
-  left: -28px;
-  bottom: -36px;
-  width: clamp(258px, 27vw, 304px);
-  background: #fff;
-  border-radius: 18px;
-  padding: 22px 22px 20px;
-  box-shadow:
-    0 30px 56px -24px rgba(4, 44, 23, 0.4),
-    0 0 0 1px rgba(4, 44, 23, 0.06);
-  z-index: var(--z-card);
-}
-
-.pilot-eyebrow {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  font-family: "Archivo", sans-serif;
-  font-size: 10.5px;
-  font-weight: 800;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: var(--green-bright);
-  margin-bottom: 12px;
-}
-
-.pilot-eyebrow::before {
+/* corner notches for poster feel */
+.offer-card::after {
   content: "";
-  width: 18px;
-  height: 1.5px;
-  background: var(--green-bright);
+  position: absolute;
+  top: -3px;
+  right: -3px;
+  width: 28px;
+  height: 28px;
+  border-top: 3px solid var(--lime);
+  border-right: 3px solid var(--lime);
+  pointer-events: none;
 }
 
-.pilot-title {
-  font-family: "Archivo", sans-serif;
-  font-weight: 800;
-  font-size: 19px;
-  line-height: 1.15;
-  color: var(--ink);
-  letter-spacing: -0.01em;
-  margin-bottom: 14px;
-}
+.offer-card > * { position: relative; z-index: 1; }
 
-.pilot-price {
-  display: flex;
-  align-items: baseline;
+.offer-eyebrow {
+  display: inline-flex;
+  align-items: center;
   gap: 9px;
+  font-family: "Archivo", sans-serif;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--lime);
   margin-bottom: 4px;
 }
 
-.pilot-price .num {
+.offer-eyebrow::before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--lime);
+  box-shadow: 0 0 0 0 rgba(201, 232, 61, 0.55);
+  animation: pulse-soft 1.8s var(--ease) infinite;
+}
+
+.offer-bigday {
   font-family: "Archivo", sans-serif;
   font-weight: 900;
-  font-size: 42px;
-  line-height: 0.95;
-  letter-spacing: -0.03em;
-  color: var(--green-deep);
+  font-size: clamp(80px, 9.4vw, 132px);
+  line-height: 0.84;
+  letter-spacing: -0.04em;
+  color: #fff;
+  text-transform: uppercase;
+  margin-top: 6px;
 }
 
-.pilot-price .lab {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--ink-soft);
+.offer-bigday .day {
+  display: block;
+  color: var(--lime);
 }
 
-.pilot-detail {
-  font-size: 13.5px;
-  line-height: 1.5;
-  color: var(--ink-soft);
-  margin-bottom: 18px;
-  font-weight: 400;
+.offer-pilot-line {
+  font-family: "Archivo", sans-serif;
+  font-weight: 900;
+  font-size: clamp(20px, 2.2vw, 28px);
+  line-height: 1;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #fff;
+  margin-top: 10px;
 }
 
-.pilot-detail strong {
-  color: var(--ink);
-  font-weight: 700;
+.offer-divider {
+  height: 1px;
+  background: linear-gradient(90deg, var(--lime) 0%, rgba(201, 232, 61, 0) 100%);
+  margin: clamp(18px, 2vw, 26px) 0 clamp(14px, 1.6vw, 20px);
 }
 
-.pilot-foot {
+.offer-prices {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: clamp(14px, 1.6vw, 20px);
+}
+
+.offer-price-row {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+}
+
+.offer-price-num {
+  font-family: "Archivo", sans-serif;
+  font-weight: 900;
+  font-size: clamp(34px, 3.6vw, 48px);
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: #fff;
+}
+
+.offer-price-row.muted .offer-price-num {
+  color: rgba(255, 255, 255, 0.92);
+  font-size: clamp(26px, 2.6vw, 36px);
+}
+
+.offer-price-label {
+  font-family: "Archivo", sans-serif;
+  font-weight: 800;
+  font-size: 11.5px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.offer-checks {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-bottom: clamp(16px, 1.8vw, 22px);
+  margin-bottom: clamp(16px, 1.8vw, 22px);
+  border-bottom: 1px dashed rgba(255, 255, 255, 0.18);
+}
+
+.offer-checks li {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  padding-top: 14px;
-  border-top: 1px solid var(--rule-soft);
-}
-
-.pilot-meta {
-  font-size: 11.5px;
-  font-weight: 600;
-  color: var(--ink-mute);
-  letter-spacing: 0.04em;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.pilot-meta svg {
-  width: 12px;
-  height: 12px;
-  color: var(--green-bright);
-}
-
-.pilot-cta {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-family: "Archivo", sans-serif;
-  font-weight: 700;
-  font-size: 13px;
-  letter-spacing: 0.02em;
-  color: var(--green-deep);
-  text-decoration: none;
-  transition: gap 0.3s var(--ease), color 0.25s;
-}
-
-.pilot-cta svg { width: 13px; height: 13px; }
-
-.pilot-cta:hover {
   gap: 10px;
-  color: var(--green-bright);
+  font-size: 13.5px;
+  color: rgba(255, 255, 255, 0.92);
+  font-weight: 500;
 }
 
-/* ─────── Below-fold sections ─────── */
+.offer-checks svg {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  color: var(--lime);
+}
 
-/* Trust strip */
-.trust-strip {
-  max-width: 1440px;
-  margin: clamp(40px, 4vw, 64px) auto 0;
+.offer-cta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 17px 24px;
+  background: var(--lime);
+  color: var(--green-deep);
+  font-family: "Archivo", sans-serif;
+  font-weight: 900;
+  font-size: clamp(14px, 1.3vw, 16px);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  text-decoration: none;
+  border-radius: 4px;
+  transition: background 0.25s, transform 0.3s var(--ease), box-shadow 0.3s var(--ease);
+  box-shadow:
+    0 14px 26px -10px rgba(201, 232, 61, 0.55),
+    inset 0 1px 0 rgba(255, 255, 255, 0.32);
+  position: relative;
+  overflow: hidden;
+}
+
+.offer-cta svg {
+  width: 17px;
+  height: 17px;
+  transition: transform 0.3s var(--ease);
+}
+
+.offer-cta:hover {
+  background: #D9F045;
+  transform: translateY(-2px);
+  box-shadow:
+    0 18px 32px -10px rgba(201, 232, 61, 0.7),
+    inset 0 1px 0 rgba(255, 255, 255, 0.32);
+}
+
+.offer-cta:hover svg { transform: translateX(4px); }
+
+.offer-foot {
+  margin-top: 14px;
+  text-align: center;
+  font-size: 10.5px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.55);
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.offer-foot::before,
+.offer-foot::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.14);
+}
+
+/* — Trust strip (sits at the foot of the hero on cream paper) — */
+.hero-trust {
+  position: relative;
+  z-index: 2;
+  background: var(--paper);
+  border-top: 4px solid var(--lime);
+  border-bottom: 1px solid var(--rule);
   padding: 0 clamp(20px, 4vw, 56px);
+}
+
+.hero-trust-inner {
+  max-width: 1380px;
+  margin: 0 auto;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 20px;
-  border-top: 1px solid var(--rule);
-  border-bottom: 1px solid var(--rule);
 }
 
-.trust-strip .titem {
+.hero-trust .titem {
   display: flex;
   align-items: center;
   gap: 14px;
-  padding: 26px 8px;
+  padding: 18px clamp(14px, 1.6vw, 24px);
   position: relative;
 }
 
-.trust-strip .titem:not(:last-child)::after {
+.hero-trust .titem:not(:last-child)::after {
   content: "";
   position: absolute;
   right: 0;
@@ -628,14 +666,16 @@ img { display: block; max-width: 100%; }
   background: var(--rule);
 }
 
-.trust-strip .ticon {
-  width: 36px;
-  height: 36px;
+.hero-trust .ticon {
+  width: 38px;
+  height: 38px;
   flex-shrink: 0;
   color: var(--green-bright);
+  display: grid;
+  place-items: center;
 }
 
-.trust-strip .ticon svg {
+.hero-trust .ticon svg {
   width: 100%;
   height: 100%;
   fill: none;
@@ -645,28 +685,32 @@ img { display: block; max-width: 100%; }
   stroke-linejoin: round;
 }
 
-.trust-strip .ticon.leaf svg {
+.hero-trust .ticon.leaf svg {
   fill: #D9352B;
   stroke: none;
 }
 
-.trust-strip .tlabel {
+.hero-trust .tlabel {
   font-family: "Archivo", sans-serif;
-  font-weight: 700;
-  font-size: 14.5px;
+  font-weight: 800;
+  font-size: clamp(13px, 1vw, 14.5px);
+  text-transform: uppercase;
   color: var(--ink);
   line-height: 1.2;
-  letter-spacing: -0.005em;
+  letter-spacing: 0.04em;
 }
 
-.trust-strip .tlabel span.canadian-accent { color: #D9352B; }
+.hero-trust .tlabel span.canadian-accent { color: #D9352B; }
+
+/* ═══════════════════════════════════════════════════════════════
+   Below-fold sections
+   ─────────────────────────────────────────────────────────────── */
 
 /* Alert showcase */
 .alert-showcase {
   max-width: 1440px;
   margin: 0 auto;
   padding: clamp(56px, 6vw, 88px) clamp(20px, 4vw, 56px) 0;
-  position: relative;
 }
 
 .alert-showcase-head {
@@ -705,14 +749,13 @@ img { display: block; max-width: 100%; }
 }
 
 .alert-tile {
-  border-radius: 14px;
+  border-radius: 12px;
   overflow: hidden;
   aspect-ratio: 226 / 246;
   box-shadow: var(--shadow-card);
   border: 1px solid rgba(31, 77, 36, 0.1);
   background: var(--paper);
   display: block;
-  position: relative;
   transition: transform 0.4s var(--ease), box-shadow 0.4s var(--ease);
 }
 
@@ -729,18 +772,17 @@ img { display: block; max-width: 100%; }
 
 /* Benefits row */
 .benefits-row {
+  margin: clamp(40px, 4vw, 64px) clamp(20px, 4vw, 56px) 0;
   max-width: 1440px;
-  margin: clamp(40px, 4vw, 64px) auto 0;
   padding: 32px clamp(28px, 3vw, 44px);
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 28px;
   background: linear-gradient(135deg, var(--green-deep) 0%, #0E2C16 100%);
-  border-radius: 16px;
+  border-radius: 14px;
+  border: 1px solid rgba(201, 232, 61, 0.22);
   position: relative;
   overflow: hidden;
-  margin-left: clamp(20px, 4vw, 56px);
-  margin-right: clamp(20px, 4vw, 56px);
 }
 
 .benefits-row::after {
@@ -748,8 +790,12 @@ img { display: block; max-width: 100%; }
   position: absolute;
   inset: auto 0 0;
   height: 2px;
-  background: linear-gradient(90deg, transparent, var(--green-bright), transparent);
+  background: linear-gradient(90deg, transparent, var(--lime), transparent);
   opacity: 0.6;
+}
+
+@media (min-width: 1456px) {
+  .benefits-row { margin-left: auto; margin-right: auto; }
 }
 
 .benefits-row .bitem {
@@ -773,7 +819,7 @@ img { display: block; max-width: 100%; }
   width: 40px;
   height: 40px;
   flex-shrink: 0;
-  color: var(--green-glow);
+  color: var(--lime);
 }
 
 .benefits-row .bicon svg {
@@ -790,7 +836,7 @@ img { display: block; max-width: 100%; }
 
 .benefits-row .btitle {
   font-family: "Archivo", sans-serif;
-  font-weight: 800;
+  font-weight: 900;
   font-size: 15px;
   letter-spacing: 0.04em;
   text-transform: uppercase;
@@ -802,45 +848,44 @@ img { display: block; max-width: 100%; }
   font-size: 13px;
   color: rgba(255, 255, 255, 0.72);
   line-height: 1.3;
-  font-weight: 400;
 }
 
-/* CTA banner — simplified, no scaleX, no absolute decorations */
+/* CTA banner */
 .cta-banner {
   max-width: 1440px;
   margin: clamp(40px, 4vw, 64px) clamp(20px, 4vw, 56px) clamp(56px, 5vw, 80px);
   background:
-    radial-gradient(ellipse 60% 100% at 0% 50%, rgba(156, 203, 50, 0.16), transparent 60%),
+    radial-gradient(ellipse 60% 100% at 0% 50%, rgba(201, 232, 61, 0.16), transparent 60%),
     linear-gradient(135deg, var(--green-deep) 0%, #0B2613 100%);
   color: #fff;
-  border-radius: 18px;
+  border-radius: 16px;
   padding: clamp(32px, 4vw, 48px) clamp(28px, 4vw, 56px);
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
   gap: clamp(28px, 4vw, 56px);
   align-items: center;
-  position: relative;
-  overflow: hidden;
-  border: 1px solid rgba(156, 203, 50, 0.22);
+  border: 1px solid rgba(201, 232, 61, 0.28);
   box-shadow: var(--shadow-deep);
+}
+
+@media (min-width: 1456px) {
+  .cta-banner { margin-left: auto; margin-right: auto; }
 }
 
 .cta-banner-content {
   display: flex;
   flex-direction: column;
   gap: 14px;
-  position: relative;
-  z-index: 2;
   min-width: 0;
 }
 
 .cta-banner-eyebrow {
   font-family: "Archivo", sans-serif;
-  font-weight: 700;
+  font-weight: 800;
   font-size: 12px;
-  letter-spacing: 0.22em;
+  letter-spacing: 0.24em;
   text-transform: uppercase;
-  color: var(--green-glow);
+  color: var(--lime);
 }
 
 .cta-banner h3 {
@@ -850,16 +895,17 @@ img { display: block; max-width: 100%; }
   line-height: 1;
   letter-spacing: -0.025em;
   color: #fff;
+  text-transform: uppercase;
 }
 
 .cta-banner h3 em {
   font-style: normal;
-  color: var(--green-glow);
+  color: var(--lime);
 }
 
 .cta-banner-sub {
   font-size: 15px;
-  color: rgba(255, 255, 255, 0.7);
+  color: rgba(255, 255, 255, 0.74);
   max-width: 480px;
   line-height: 1.5;
 }
@@ -876,18 +922,18 @@ img { display: block; max-width: 100%; }
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  padding: 16px 26px;
-  background: var(--green-glow);
+  padding: 17px 28px;
+  background: var(--lime);
   color: var(--green-deep);
-  border-radius: 999px;
+  border-radius: 4px;
   font-family: "Archivo", sans-serif;
-  font-weight: 800;
+  font-weight: 900;
   font-size: 14.5px;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   text-decoration: none;
-  transition: background 0.25s, transform 0.3s var(--ease), box-shadow 0.3s var(--ease);
-  box-shadow: 0 18px 30px -16px rgba(156, 203, 50, 0.6);
+  transition: background 0.25s, transform 0.3s var(--ease);
+  box-shadow: 0 16px 28px -12px rgba(201, 232, 61, 0.6);
 }
 
 .cta-banner-btn svg {
@@ -897,7 +943,7 @@ img { display: block; max-width: 100%; }
 }
 
 .cta-banner-btn:hover {
-  background: #B0DD4A;
+  background: #D9F045;
   transform: translateY(-2px);
 }
 
@@ -908,9 +954,9 @@ img { display: block; max-width: 100%; }
   align-items: center;
   gap: 8px;
   font-family: "Archivo", sans-serif;
-  font-weight: 700;
-  font-size: 13.5px;
-  letter-spacing: 0.04em;
+  font-weight: 800;
+  font-size: 13px;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   color: rgba(255, 255, 255, 0.78);
   text-decoration: none;
@@ -921,15 +967,13 @@ img { display: block; max-width: 100%; }
 
 .cta-banner-link:hover {
   color: #fff;
-  border-bottom-color: var(--green-glow);
+  border-bottom-color: var(--lime);
 }
 
 .cta-banner-qr {
   display: flex;
   align-items: center;
   gap: 16px;
-  position: relative;
-  z-index: 2;
 }
 
 .cta-banner-qr-card {
@@ -937,19 +981,18 @@ img { display: block; max-width: 100%; }
   height: 124px;
   background: #fff;
   padding: 7px;
-  border-radius: 10px;
-  border: 2px solid rgba(156, 203, 50, 0.6);
+  border-radius: 8px;
+  border: 2px solid rgba(201, 232, 61, 0.7);
   flex-shrink: 0;
 }
 
 .cta-banner-qr-card img {
   width: 100%;
   height: 100%;
-  display: block;
 }
 
 .cta-banner-qr-note {
-  font-size: 13.5px;
+  font-size: 13px;
   line-height: 1.45;
   color: rgba(255, 255, 255, 0.78);
   max-width: 160px;
@@ -960,16 +1003,17 @@ img { display: block; max-width: 100%; }
   font-weight: 700;
 }
 
-/* Page footer (compact, cream) */
+/* Page footer */
 .page-footer {
-  background: var(--paper);
-  border-top: 1px solid var(--rule);
+  background: var(--green-deep);
+  color: rgba(255, 255, 255, 0.86);
   padding: 22px clamp(20px, 4vw, 56px);
   display: flex;
   justify-content: center;
   align-items: center;
   gap: 36px;
   flex-wrap: wrap;
+  border-top: 2px solid var(--lime);
 }
 
 .footer-cell {
@@ -977,61 +1021,52 @@ img { display: block; max-width: 100%; }
   align-items: center;
   gap: 9px;
   font-size: 14px;
-  color: var(--ink-soft);
 }
 
 .footer-cell svg {
   width: 14px;
   height: 14px;
-  color: var(--green-bright);
+  color: var(--lime);
   flex-shrink: 0;
 }
 
 .footer-cell a {
-  color: var(--ink);
+  color: #fff;
   text-decoration: none;
-  font-weight: 600;
+  font-weight: 700;
+  letter-spacing: 0.02em;
   transition: color 0.2s;
 }
 
-.footer-cell a:hover { color: var(--green-deep); }
+.footer-cell a:hover { color: var(--lime); }
 
 .footer-divider {
   width: 4px;
   height: 4px;
   border-radius: 50%;
-  background: var(--rule);
+  background: rgba(255, 255, 255, 0.32);
 }
 
-/* ─────── Animations ─────── */
+/* ═══════════════════════════════════════════════════════════════
+   Animations
+   ─────────────────────────────────────────────────────────────── */
 @keyframes pulse-soft {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(156, 203, 50, 0.5); }
-  60%      { box-shadow: 0 0 0 8px rgba(156, 203, 50, 0); }
+  0%, 100% { box-shadow: 0 0 0 0 rgba(201, 232, 61, 0.5); }
+  60%      { box-shadow: 0 0 0 8px rgba(201, 232, 61, 0); }
 }
 
-/* ─────── Responsive ─────── */
+/* ═══════════════════════════════════════════════════════════════
+   Responsive
+   ─────────────────────────────────────────────────────────────── */
 @media (max-width: 1024px) {
-  .hero-inner {
+  .hero-body {
     grid-template-columns: 1fr;
-    gap: 64px;
+    gap: 32px;
   }
 
-  .hero-content { max-width: 640px; }
+  .hero-trust-inner { grid-template-columns: repeat(2, 1fr); }
 
-  .hero-visual { min-height: 460px; max-width: 640px; }
-
-  .hero-photo { min-height: 460px; }
-
-  .pilot-card {
-    left: auto;
-    right: -16px;
-    bottom: -28px;
-    width: clamp(260px, 50vw, 320px);
-  }
-
-  .trust-strip { grid-template-columns: repeat(2, 1fr); row-gap: 0; }
-
-  .trust-strip .titem:nth-child(2)::after { display: none; }
+  .hero-trust .titem:nth-child(2)::after { display: none; }
 
   .alert-grid { grid-template-columns: repeat(2, 1fr); gap: 14px; }
 
@@ -1044,92 +1079,84 @@ img { display: block; max-width: 100%; }
 
   .cta-banner {
     grid-template-columns: 1fr;
-    text-align: left;
   }
 }
 
 @media (max-width: 768px) {
-  .topbar-inner {
-    grid-template-columns: auto 1fr;
-    height: 60px;
-    gap: 16px;
-  }
+  .topbar { height: 40px; }
 
-  .tb-nav { display: none; }
+  .tb-live { font-size: 9.5px; gap: 7px; }
 
-  .tb-actions { gap: 14px; justify-content: flex-end; }
+  .tb-actions { gap: 14px; }
 
   .tb-phone span { display: none; }
 
-  .tb-cta { padding: 9px 16px; font-size: 12px; }
+  .tb-cta { padding: 7px 12px; font-size: 10.5px; letter-spacing: 0.12em; }
 
-  .hero {
-    padding: clamp(40px, 6vw, 64px) 20px clamp(72px, 8vw, 100px);
-  }
+  .hero { padding-top: 56px; }
 
-  .hero-visual { min-height: 380px; }
+  .masthead-word { font-size: clamp(32px, 8vw, 44px); }
 
-  .hero-photo { min-height: 380px; }
+  .masthead-tagline { letter-spacing: 0.24em; }
 
-  .hero-cta-row { gap: 16px; }
+  .hero h1 { font-size: clamp(40px, 9vw, 56px); }
 
-  .hero-proof { gap: 16px; }
-
-  .hero-proof li { font-size: 13.5px; }
-
-  .pilot-card {
-    width: calc(100% - 32px);
-    left: 16px;
-    right: 16px;
-    bottom: -42px;
-  }
+  .offer-bigday { font-size: clamp(72px, 17vw, 110px); }
 }
 
 @media (max-width: 540px) {
-  .topbar-inner { padding: 0 16px; gap: 10px; }
+  .topbar-inner { padding: 0 16px; }
 
-  .tb-word { font-size: 14px; }
+  .tb-live { display: none; }
 
-  .tb-mark { width: 28px; height: 28px; }
+  .tb-actions { gap: 10px; margin-left: auto; }
 
-  .tb-mark svg { width: 16px; height: 16px; }
+  .hero { padding-left: 16px; padding-right: 16px; }
 
-  .tb-phone { display: none; }
+  .masthead { padding-bottom: 20px; margin-bottom: 24px; gap: 12px; }
 
-  .tb-cta { padding: 9px 14px; font-size: 11.5px; letter-spacing: 0.04em; }
+  .masthead-mark { width: 50px; height: 50px; border-radius: 9px; }
 
-  .hero h1 { font-size: clamp(34px, 9vw, 50px); }
+  .masthead-word { font-size: 30px; }
 
-  .hero-cta-row { flex-direction: column; align-items: stretch; gap: 14px; }
+  .masthead-tagline { font-size: 10px; letter-spacing: 0.2em; }
 
-  .btn-primary { justify-content: center; }
+  .hero h1 { font-size: clamp(34px, 9vw, 44px); }
 
-  .btn-secondary { justify-content: center; }
+  .hero-feature-list .ico { width: 44px; height: 44px; }
 
-  .trust-strip {
-    grid-template-columns: 1fr;
-    padding: 0 20px;
-  }
+  .hero-feature-list .ico svg { width: 24px; height: 24px; }
 
-  .trust-strip .titem:not(:last-child)::after { display: none; }
+  .hero-feature-list .fname { font-size: 14px; }
 
-  .trust-strip .titem {
+  .hero-feature-list .fdesc { font-size: 12.5px; }
+
+  .offer-card { padding: 22px 22px 20px; }
+
+  .offer-bigday { font-size: clamp(64px, 18vw, 90px); }
+
+  .offer-pilot-line { font-size: 18px; }
+
+  .hero-trust { padding: 0 16px; }
+
+  .hero-trust-inner { grid-template-columns: 1fr; }
+
+  .hero-trust .titem {
     border-bottom: 1px solid var(--rule-soft);
-    padding: 18px 0;
+    padding: 14px 0;
   }
 
-  .trust-strip .titem:last-child { border-bottom: 0; }
+  .hero-trust .titem:not(:last-child)::after { display: none; }
+
+  .hero-trust .titem:last-child { border-bottom: 0; }
 
   .alert-grid { grid-template-columns: 1fr; }
 
-  .benefits-row {
-    grid-template-columns: 1fr;
-    row-gap: 18px;
-  }
+  .benefits-row { grid-template-columns: 1fr; row-gap: 18px; padding: 24px 22px; }
 
   .benefits-row .bitem:not(:last-child)::after { display: none; }
 
-  .cta-banner-actions { flex-direction: column; align-items: stretch; gap: 14px; }
+  .cta-banner-actions { flex-direction: column; align-items: stretch; }
 
   .cta-banner-btn { justify-content: center; }
 
@@ -1153,171 +1180,191 @@ img { display: block; max-width: 100%; }
 <body>
 
 <!-- ═══════════════════════════════════════════════════════════════ -->
-<!--   Topbar                                                        -->
-<!-- ═══════════════════════════════════════════════════════════════ -->
-<header class="topbar" aria-label="Site header">
-  <div class="topbar-inner">
-    <a class="tb-brand" href="index.html" aria-label="TerraNexis home">
-      <span class="tb-mark" aria-hidden="true">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M12 3.5C8.5 8 6 11 6 15a6 6 0 0 0 12 0c0-4-2.5-7-6-11.5z" fill="rgba(255,255,255,0.18)"/>
-          <path d="M12 9.5v6.5M9.5 13.2L12 11.4l2.5 1.8"/>
-        </svg>
-      </span>
-      <span class="tb-word">TERRA<span class="nx">NEXIS</span></span>
-    </a>
-
-    <nav class="tb-nav" aria-label="Primary">
-      <a href="#how">How it works</a>
-      <a href="#pilot">Pilot</a>
-      <a href="#alerts">Alerts</a>
-      <a href="index.html">Founders</a>
-    </nav>
-
-    <div class="tb-actions">
-      <a class="tb-phone" href="tel:6473934289" aria-label="Call TerraNexis">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7 12.8 12.8 0 0 0 .7 2.8 2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.5 12.8 12.8 0 0 0 2.8.7 2 2 0 0 1 1.7 2z"/>
-        </svg>
-        <span>647-393-4289</span>
-      </a>
-
-      <a class="tb-cta" href="#pilot">
-        Book Demo
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <path d="M5 12h14M13 5l7 7-7 7"/>
-        </svg>
-      </a>
-    </div>
-  </div>
-</header>
-
-<!-- ═══════════════════════════════════════════════════════════════ -->
-<!--   Hero — single focal point                                     -->
+<!--   Hero — full-bleed photo with masthead, headline, offer        -->
 <!-- ═══════════════════════════════════════════════════════════════ -->
 <section class="hero" id="pilot">
-  <div class="hero-inner">
 
-    <div class="hero-content">
-      <span class="hero-eyebrow">Ontario Pilot · Now Enrolling 2026</span>
+  <!-- Slim utility topbar over the photo -->
+  <header class="topbar" aria-label="Site header">
+    <div class="topbar-inner">
+      <span class="tb-live">
+        <span class="ld" aria-hidden="true"></span>
+        <span>Live · Niagara · Pilot 2026</span>
+      </span>
 
-      <h1>Know More.<br>Waste Less.<br><em>Grow Better.</em></h1>
-
-      <p class="hero-lead">
-        Real-time soil and weather intelligence delivered to your phone. Smarter irrigation, fewer guesses, better yields — built for Ontario farms.
-      </p>
-
-      <div class="hero-cta-row">
-        <a class="btn-primary" href="#pilot">
-          Start 60-Day Pilot
+      <div class="tb-actions">
+        <a class="tb-phone" href="tel:6473934289">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7 12.8 12.8 0 0 0 .7 2.8 2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.5 12.8 12.8 0 0 0 2.8.7 2 2 0 0 1 1.7 2z"/>
+          </svg>
+          <span>647-393-4289</span>
+        </a>
+        <a class="tb-cta" href="#offer">
+          Reserve Pilot
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <path d="M5 12h14M13 5l7 7-7 7"/>
           </svg>
         </a>
-        <a class="btn-secondary" href="#how">
-          See how it works
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      </div>
+    </div>
+  </header>
+
+  <div class="hero-inner">
+
+    <!-- Big branded masthead -->
+    <div class="masthead">
+      <span class="masthead-mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 3.2C8.5 8 6 11 6 15a6 6 0 0 0 12 0c0-4-2.5-7-6-11.8z" fill="currentColor" fill-opacity="0.18"/>
+          <path d="M12 9v7M9.5 13.2L12 11.4l2.5 1.8"/>
+        </svg>
+      </span>
+      <div class="masthead-text">
+        <span class="masthead-word">TERRA<span class="nx">NEXIS</span></span>
+        <span class="masthead-tagline">Smarter Farming. Better Results.</span>
+      </div>
+    </div>
+
+    <div class="hero-body">
+
+      <!-- Headline + 4 feature rows -->
+      <div class="hero-content">
+        <h1>Know More.<br>Waste Less.<br><em>Grow Better.</em></h1>
+
+        <ul class="hero-feature-list">
+          <li>
+            <span class="ico" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 0 1 18 0"/><path d="M6.5 12a5.5 5.5 0 0 1 11 0"/><path d="M10 12a2 2 0 0 1 4 0"/><circle cx="12" cy="18.5" r="1.4" fill="currentColor" stroke="none"/></svg>
+            </span>
+            <div class="ftext">
+              <span class="fname">Real-Time Soil &amp; Crop Monitoring</span>
+              <span class="fdesc">Live field data sent straight to your phone.</span>
+            </div>
+          </li>
+          <li>
+            <span class="ico" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><path d="M12 3a7 7 0 0 0-7 7v3l-2 3h18l-2-3v-3a7 7 0 0 0-7-7z"/><path d="M10 19a2 2 0 0 0 4 0"/></svg>
+            </span>
+            <div class="ftext">
+              <span class="fname">Instant Alerts</span>
+              <span class="fdesc">Know when moisture drops or rain is coming.</span>
+            </div>
+          </li>
+          <li>
+            <span class="ico" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><rect x="6" y="3" width="12" height="18" rx="2"/><line x1="9" y1="7" x2="15" y2="7"/><line x1="9" y1="11" x2="13" y2="11"/><circle cx="12" cy="17.5" r="1" fill="currentColor" stroke="none"/></svg>
+            </span>
+            <div class="ftext">
+              <span class="fname">Simple Mobile Dashboard</span>
+              <span class="fdesc">See your whole farm in one easy view.</span>
+            </div>
+          </li>
+          <li>
+            <span class="ico" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><path d="M8 4v6"/><path d="M16 4v6"/><path d="M5 10h14v4a7 7 0 0 1-14 0z"/><path d="M12 21v-3"/></svg>
+            </span>
+            <div class="ftext">
+              <span class="fname">Fast Sensor Setup</span>
+              <span class="fdesc">Installed in under an hour. Built to last.</span>
+            </div>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Big lime-bordered offer card -->
+      <aside class="offer-card" id="offer" aria-label="Pilot offer">
+        <span class="offer-eyebrow">Start Your</span>
+
+        <div class="offer-bigday">
+          60
+          <span class="day">Day</span>
+        </div>
+
+        <div class="offer-pilot-line">Farm Pilot</div>
+
+        <div class="offer-divider" aria-hidden="true"></div>
+
+        <div class="offer-prices">
+          <div class="offer-price-row">
+            <span class="offer-price-num">$100</span>
+            <span class="offer-price-label">One-Time Setup</span>
+          </div>
+          <div class="offer-price-row muted">
+            <span class="offer-price-num">$49</span>
+            <span class="offer-price-label">/ Month After Pilot</span>
+          </div>
+        </div>
+
+        <ul class="offer-checks">
+          <li>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <polyline points="20 6 9 17 4 12"/>
+            </svg>
+            Cancel anytime — no long-term contract.
+          </li>
+          <li>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <polyline points="20 6 9 17 4 12"/>
+            </svg>
+            Full season of sensors + dashboard access.
+          </li>
+          <li>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <polyline points="20 6 9 17 4 12"/>
+            </svg>
+            Real Ontario phone support, not chatbots.
+          </li>
+        </ul>
+
+        <a class="offer-cta" href="#offer">
+          Reserve Your Pilot
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <path d="M5 12h14M13 5l7 7-7 7"/>
           </svg>
         </a>
-      </div>
 
-      <ul class="hero-proof">
-        <li>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <polyline points="20 6 9 17 4 12"/>
-          </svg>
-          <strong>Live soil moisture</strong>&nbsp;alerts to your phone
-        </li>
-        <li>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <polyline points="20 6 9 17 4 12"/>
-          </svg>
-          Setup in <strong>under an hour</strong>
-        </li>
-        <li>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <polyline points="20 6 9 17 4 12"/>
-          </svg>
-          <strong>Cancel anytime</strong> — no contract
-        </li>
-      </ul>
-    </div>
-
-    <div class="hero-visual">
-      <div class="hero-photo">
-        <img src="assets/hero-farm.png" alt="Ontario farm field at golden hour" loading="eager">
-        <div class="hero-photo-tag" aria-label="Live status">
-          <span class="ld" aria-hidden="true"></span>
-          <span>Niagara · Field 04 Live</span>
-        </div>
-      </div>
-
-      <aside class="pilot-card" aria-label="Pilot pricing">
-        <div class="pilot-eyebrow">60-Day Farm Pilot</div>
-        <div class="pilot-title">A real season on TerraNexis — for the price of a service call.</div>
-
-        <div class="pilot-price">
-          <span class="num">$100</span>
-          <span class="lab">one-time setup</span>
-        </div>
-
-        <p class="pilot-detail">
-          Then <strong>$49/mo</strong> after pilot. Cancel anytime.
-        </p>
-
-        <div class="pilot-foot">
-          <span class="pilot-meta">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <path d="M12 2 L15 8.5 L22 9.3 L17 14 L18.2 21 L12 17.8 L5.8 21 L7 14 L2 9.3 L9 8.5 Z"/>
-            </svg>
-            Limited Niagara spots
-          </span>
-          <a class="pilot-cta" href="#pilot">
-            Reserve
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <path d="M5 12h14M13 5l7 7-7 7"/>
-            </svg>
-          </a>
-        </div>
+        <span class="offer-foot">Limited Niagara Spots · 2026</span>
       </aside>
+
     </div>
+  </div>
 
+  <!-- Trust strip pinned to the foot of the fold -->
+  <div class="hero-trust" aria-label="Trust signals">
+    <div class="hero-trust-inner">
+      <div class="titem">
+        <span class="ticon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 12-9 12s-9-5-9-12a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        </span>
+        <span class="tlabel">Ontario-Based<br>Support</span>
+      </div>
+      <div class="titem">
+        <span class="ticon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15.5 14"/></svg>
+        </span>
+        <span class="tlabel">Simple Setup<br>in Minutes</span>
+      </div>
+      <div class="titem">
+        <span class="ticon leaf" aria-hidden="true">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="-2015 -2000 4030 4030" role="img" aria-label="Canadian maple leaf">
+            <path fill="#D9352B" d="m-90 2030 45-863a95 95 0 0 0-111-98l-859 151 116-320a65 65 0 0 0-20-73l-941-762 212-99a65 65 0 0 0 34-79l-186-572 542 115a65 65 0 0 0 73-38l105-247 423 454a65 65 0 0 0 111-57l-204-1052 327 189a65 65 0 0 0 91-27l332-652 332 652a65 65 0 0 0 91 27l327-189-204 1052a65 65 0 0 0 111 57l423-454 105 247a65 65 0 0 0 73 38l542-115-186 572a65 65 0 0 0 34 79l212 99-941 762a65 65 0 0 0-20 73l116 320-859-151a95 95 0 0 0-111 98l45 863z"/>
+          </svg>
+        </span>
+        <span class="tlabel">Built for<br><span class="canadian-accent">Canadian</span> Farms</span>
+      </div>
+      <div class="titem">
+        <span class="ticon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M4 14v-3a8 8 0 0 1 16 0v3"/><rect x="2.5" y="13.5" width="4" height="6" rx="1.4"/><rect x="17.5" y="13.5" width="4" height="6" rx="1.4"/><path d="M20 19v.5a2.5 2.5 0 0 1-2.5 2.5H13"/></svg>
+        </span>
+        <span class="tlabel">Real People.<br>Real Support.</span>
+      </div>
+    </div>
   </div>
 </section>
 
 <!-- ═══════════════════════════════════════════════════════════════ -->
-<!--   Below-fold: trust, alerts, benefits, CTA, footer              -->
+<!--   Below-fold sections                                           -->
 <!-- ═══════════════════════════════════════════════════════════════ -->
-
-<section class="trust-strip" aria-label="Trust signals">
-  <div class="titem">
-    <span class="ticon" aria-hidden="true">
-      <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 12-9 12s-9-5-9-12a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-    </span>
-    <span class="tlabel">Ontario-based<br>support</span>
-  </div>
-  <div class="titem">
-    <span class="ticon" aria-hidden="true">
-      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15.5 14"/></svg>
-    </span>
-    <span class="tlabel">Setup in<br>under an hour</span>
-  </div>
-  <div class="titem">
-    <span class="ticon leaf" aria-hidden="true">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="-2015 -2000 4030 4030" role="img" aria-label="Canadian maple leaf">
-        <path fill="#D9352B" d="m-90 2030 45-863a95 95 0 0 0-111-98l-859 151 116-320a65 65 0 0 0-20-73l-941-762 212-99a65 65 0 0 0 34-79l-186-572 542 115a65 65 0 0 0 73-38l105-247 423 454a65 65 0 0 0 111-57l-204-1052 327 189a65 65 0 0 0 91-27l332-652 332 652a65 65 0 0 0 91 27l327-189-204 1052a65 65 0 0 0 111 57l423-454 105 247a65 65 0 0 0 73 38l542-115-186 572a65 65 0 0 0 34 79l212 99-941 762a65 65 0 0 0-20 73l116 320-859-151a95 95 0 0 0-111 98l45 863z"/>
-      </svg>
-    </span>
-    <span class="tlabel">Built for<br><span class="canadian-accent">Canadian</span> farms</span>
-  </div>
-  <div class="titem">
-    <span class="ticon" aria-hidden="true">
-      <svg viewBox="0 0 24 24"><path d="M4 14v-3a8 8 0 0 1 16 0v3"/><rect x="2.5" y="13.5" width="4" height="6" rx="1.4"/><rect x="17.5" y="13.5" width="4" height="6" rx="1.4"/><path d="M20 19v.5a2.5 2.5 0 0 1-2.5 2.5H13"/></svg>
-    </span>
-    <span class="tlabel">Real people.<br>Real support.</span>
-  </div>
-</section>
 
 <section class="alert-showcase" id="alerts">
   <div class="alert-showcase-head">
@@ -1386,7 +1433,7 @@ img { display: block; max-width: 100%; }
     <h3>Book your <em>60-day pilot</em></h3>
     <p class="cta-banner-sub">$100 setup, $49/mo after pilot, cancel anytime. Limited Niagara spots for the 2026 season.</p>
     <div class="cta-banner-actions">
-      <a href="#pilot" class="cta-banner-btn">
+      <a href="#offer" class="cta-banner-btn">
         Reserve Your Pilot
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <path d="M5 12h14M13 5l7 7-7 7"/>
