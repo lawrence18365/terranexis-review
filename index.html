@@ -59,6 +59,49 @@
     outline: 2px solid rgba(180, 212, 76, 0.6);
     outline-offset: 2px;
   }
+  .page-nav {
+    position: fixed;
+    right: max(18px, env(safe-area-inset-right));
+    top: 50%;
+    z-index: 10;
+    display: grid;
+    gap: 8px;
+    transform: translateY(-50%);
+    font: 700 13px/1 -apple-system, system-ui, sans-serif;
+  }
+  .page-nav a {
+    min-width: 84px;
+    border: 1px solid rgba(180, 212, 76, 0.45);
+    border-radius: 999px;
+    padding: 10px 14px;
+    color: #FFFFFF;
+    background: rgba(4, 54, 26, 0.86);
+    text-align: center;
+    text-decoration: none;
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(10px);
+  }
+  .page-nav a[aria-current="page"] {
+    color: #04361A;
+    background: #B4D44C;
+  }
+  .page-nav a:focus-visible {
+    outline: 2px solid #FFFFFF;
+    outline-offset: 2px;
+  }
+  @media (max-width: 820px) {
+    .page-nav {
+      right: 50%;
+      top: auto;
+      bottom: max(14px, env(safe-area-inset-bottom));
+      grid-auto-flow: column;
+      transform: translateX(50%);
+    }
+    .page-nav a {
+      min-width: 72px;
+      padding: 10px 12px;
+    }
+  }
 </style>
 </head>
 <body>
@@ -68,5 +111,10 @@
       <img src="assets/qr-trial.png" alt="">
     </a>
   </div>
+  <nav class="page-nav" aria-label="Flyer pages">
+    <a href="/" aria-current="page">Home</a>
+    <a href="/page-2.html">Page 2</a>
+    <a href="/page-3.html">Alerts</a>
+  </nav>
 </body>
 </html>
