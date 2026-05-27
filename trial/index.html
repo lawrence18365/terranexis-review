@@ -4,41 +4,24 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#04361A">
-<title>TerraNexis — Know More. Waste Less. Grow Better.</title>
-<meta name="description" content="60-Day Free Farm Trial for Ontario growers. Real-time soil and weather alerts. $100 setup, $49/mo, cancel anytime.">
-<style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  html, body {
-    height: 100%;
-    background: #04361A;
-    overflow: hidden;
-  }
-  body {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 100vh;
-    min-height: 100svh;
-    font-family: -apple-system, system-ui, sans-serif;
-  }
-  .flyer-frame {
-    position: relative;
-    width: min(100vw, calc(100vh * 2 / 3));
-    height: min(100vh, calc(100vw * 3 / 2));
-    width: min(100vw, calc(100svh * 2 / 3));
-    height: min(100svh, calc(100vw * 3 / 2));
-  }
-  .flyer-frame img {
-    display: block;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-</style>
+<title>TerraNexis — Apply for the Pilot</title>
+<meta name="description" content="Apply for the TerraNexis 60-day free farm trial for Ontario growers.">
+<link rel="preload" as="image" href="../assets/flyer-page-2.png">
+<link rel="stylesheet" href="../assets/site.css">
 </head>
-<body>
-  <div class="flyer-frame">
-    <img src="../assets/flyer-page-2.png" alt="TerraNexis flyer — page 2">
-  </div>
+<body class="trial-only" data-active-page="2">
+  <main class="flyer-deck" aria-label="TerraNexis pilot application">
+    <section class="flyer-page" id="trial" style="--flyer-aspect: 1009 / 1558;" aria-labelledby="trial-title">
+      <h1 class="visually-hidden" id="trial-title">TerraNexis pilot application</h1>
+      <div class="flyer-frame">
+        <img class="flyer-image" src="../assets/flyer-page-2.png" alt="TerraNexis flyer — 60-day free farm trial, setup details, and pilot application" width="1009" height="1558" fetchpriority="high">
+        <a class="pilot-link" href="mailto:info@terranexis.ca?subject=TerraNexis%20Pilot%20Application" aria-label="Email TerraNexis to apply for the pilot">
+          <span>Email info@terranexis.ca</span>
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <a class="return-link" href="../" aria-label="View full TerraNexis flyer">View flyer</a>
 </body>
 </html>
